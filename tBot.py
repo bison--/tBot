@@ -75,6 +75,7 @@ def log(msg):
 class tBot(object):
     def __init__(self):
         self.sock = socket.socket()
+        self.connected = False
 
     def commands(self, username, message, messageLower):
         if "!test" == messageLower:
@@ -108,19 +109,21 @@ class tBot(object):
             self.sock.send("PASS {}\r\n".format(PASS).encode("utf-8"))
             self.sock.send("NICK {}\r\n".format(NICK).encode("utf-8"))
             self.sock.send("JOIN {}\r\n".format(CHAN).encode("utf-8"))
-            connected = True
+            self.connected = True
         except Exception as ex:
+            self.connected = False
             print(ex)
-            connected = False
 
-        while connected:
+        while self.connected:
             try:
                 self.executor()
             except Exception as ex:
+                self.connected = False
                 print(ex)
 
             sleep(0.1)
 
+        log('PASSED AWAY')
 
     def executor(self):
         response = self.sock.recv(2048).decode("utf-8")
@@ -156,11 +159,9 @@ class tBot(object):
             elif 'chemie ' in messageLower or ' chemie' in messageLower:
                 self.chat("baukasten")
 
-
     def chat(self, msg):
         """
 
-        :type sock: socket.socket
         :type msg: string
         """
         log('sending...')
@@ -168,5 +169,11 @@ class tBot(object):
 
 
 if __name__ == "__main__":
-    bot = tBot()
-    bot.main_loop()
+    keepRunning = True
+    revivedCount = 0
+    while keepRunning:
+        revivedCount += 1
+        log('REVIVED: ' + str(revivedCount))
+        bot = tBot()
+        bot.main_loop()
+        sleep(10 * 60)
