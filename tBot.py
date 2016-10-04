@@ -3,6 +3,7 @@ from time import sleep
 import socket
 import time
 import os
+import json
 
 if os.path.isfile('config_local.py'):
     import config_local as config
@@ -68,6 +69,25 @@ def explainHamster(bot):
     sleep(1.5)
 
 
+def saveJson(file, data):
+    try:
+        with open(file, 'w') as data_file:
+            json.dump(data, data_file)
+    except Exception as ex:
+        print(ex)
+
+
+def loadJson(file):
+    data = None
+    try:
+        with open(file) as data_file:
+            data = json.load(data_file)
+    except Exception as ex:
+        print(ex)
+
+    return data
+
+
 def log(msg):
     print(time.strftime("%Y-%m-%d %H:%M:%S: ") + msg)
 
@@ -77,8 +97,17 @@ class tBot(object):
         self.sock = socket.socket()
         self.connected = False
         self.die = False
+        self.dynamicCommandsFile = 'dynamicCommands.json'
+        self.dynamicCommands = {}
+
+        dynamicCommandsTmp = loadJson(self.dynamicCommandsFile)
+        if dynamicCommandsTmp is not None:
+           self.dynamicCommands = dynamicCommandsTmp
 
     def commands(self, username, message, messageLower):
+        chatName = '@' + username
+        myMasters = {'timkalation', 'bison_42'}
+
         if "!test" == messageLower:
             self.chat("HAMSTER!")
         elif '!lupfer' == messageLower:
@@ -106,12 +135,30 @@ class tBot(object):
         elif '!burn' == messageLower:
             self.chat('🔥'*10)
         elif '!kill' == messageLower:
-            if 'timkalation' == username or 'bison_42' == username:
+            if username in myMasters:
                 self.chat('live long and prosper 🖖')
                 self.die = True
                 self.connected = False
             else:
-                self.chat('@' + username + 'your kung fu is not strong enough ')
+                self.chat(chatName + ' your kung fu is not strong enough!')
+        elif message.startswith('!add'):
+            if username in myMasters:
+                cmdParts = message.split(' ')
+                if len(cmdParts) <= 3:
+                    self.chat(chatName + ' this is wrong -.-')
+                else:
+                    cmdKey = cmdParts[1]
+                    cmdText = ' '.join(cmdParts[2:])
+                    if cmdKey in self.dynamicCommands:
+                        self.chat(chatName + ' i will change my quest for "' + cmdKey + '"')
+                    else:
+                        self.chat(chatName + ' i added "' + cmdKey + '" to my quest log!')
+                    self.dynamicCommands[cmdKey] = cmdText
+                    saveJson(self.dynamicCommandsFile, self.dynamicCommands)
+            else:
+                self.chat(chatName + ' your kung fu is not strong enough!')
+        elif message in self.dynamicCommands:
+            self.chat(self.dynamicCommands[message])
 
     def main_loop(self):
         try:

@@ -63,3 +63,4 @@ target/
 .idea/
 notes.txt
 config_local.py
+dynamicCommands.json
