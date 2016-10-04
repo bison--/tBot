@@ -151,6 +151,8 @@ class tBot(object):
                     or 'guten abend'in messageLower\
                     or 'servus'in messageLower:
                 self.chat("ohai o/")
+            elif 'momentum' in messageLower:
+                self.chat("nein @"+username)
             elif 'chemie ' in messageLower or ' chemie' in messageLower:
                 self.chat("baukasten")
 
