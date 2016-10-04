@@ -76,10 +76,13 @@ class tBot(object):
     def __init__(self):
         self.sock = socket.socket()
         self.connected = False
+        self.die = False
 
     def commands(self, username, message, messageLower):
         if "!test" == messageLower:
             self.chat("HAMSTER!")
+        elif '!lupfer' == messageLower:
+            self.chat('lupfe die lupf hupf ¯\_(ツ)_/¯')
         elif '!deckel' == messageLower:
             self.chat("!dackel")
         elif '!woher' == messageLower:
@@ -102,6 +105,13 @@ class tBot(object):
             self.chat("@timkalation: GO GO TIM TIM GO GO!")
         elif '!burn' == messageLower:
             self.chat('🔥'*10)
+        elif '!kill' == messageLower:
+            if 'timkalation' == username or 'bison_42' == username:
+                self.chat('live long and prosper 🖖')
+                self.die = True
+                self.connected = False
+            else:
+                self.chat('@' + username + 'your kung fu is not strong enough ')
 
     def main_loop(self):
         try:
@@ -176,4 +186,9 @@ if __name__ == "__main__":
         log('REVIVED: ' + str(revivedCount))
         bot = tBot()
         bot.main_loop()
-        sleep(10 * 60)
+        if bot.die:
+            keepRunning = False
+        else:
+            sleep(10 * 60)
+
+log('DEAD!')
