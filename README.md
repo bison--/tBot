@@ -20,3 +20,10 @@ and the bot wil write to the chat:
 ```
 rofl die katz
 ```
+
+## kill the ghost
+
+* be **@timkalation** or **@bison_42**
+* type **!kill** in the chat
+* ...
+* profit!
