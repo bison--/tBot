@@ -23,7 +23,11 @@ CHAN = config.CHAN
 CHAT_MSG = re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
 
 
-def realitycheck(s):
+def realitycheck(bot):
+    """
+
+    :param bot: tBot
+    """
     checks = [
         '''13.06.2016 10:44 :~: Einmal Popcorn bitte. 50 Liter.
 
@@ -50,119 +54,117 @@ def realitycheck(s):
     ]
     import random
     for line in random.choice(checks).split("\n"):
-        chat(s, line)
+        bot.chat(line)
 
 
-def explainHamster(s):
+def explainHamster(bot):
     """
 
-    :param s: socket.socket
+    :param bot: tBot
     """
-    chat(s, "HAMSTER sind im grunde genau wie Zigaretten...")
+    bot.chat("HAMSTER sind im grunde genau wie Zigaretten...")
     sleep(1.5)
-    chat(s, "Vollkommen harmlos... bis man sie sich in den Mund steckt und anzündet!")
+    bot.chat("Vollkommen harmlos... bis man sie sich in den Mund steckt und anzündet!")
     sleep(1.5)
-
-
-def commands(s, username, message, messageLower):
-    if "!test" == messageLower:
-        chat(s, "HAMSTER!")
-    elif '!deckel' == messageLower:
-        chat(s, "!dackel")
-    elif '!woher' == messageLower:
-        chat(s, "aus dem meer")
-    elif '!wohin' == messageLower:
-        chat(s, "ins TOR natürlich!")
-    elif '!wovon' == messageLower:
-        chat(s, "purer skill!!1!")
-    elif '!wann' == messageLower:
-        chat(s, "bis dann o/")
-    elif '!wurm' == messageLower:
-        chat(s, "~~~~~~~~~~~~~~~~~~~~~~~~O<")
-    elif '!wasstimmtdennmitdirnicht' == messageLower:
-        realitycheck(s)
-    elif '!hilfe' == message or '!help' == messageLower:
-        chat(s, "help your self :P")
-    elif '!wassindhamster' == messageLower or '!hamster' == messageLower:
-        explainHamster(s)
-    elif '!go' == messageLower:
-        chat(s, "@timkalation: GO GO TIM TIM GO GO!")
-    elif '!burn' == messageLower:
-        chat(s, '🔥'*10)
 
 
 def log(msg):
     print(time.strftime("%Y-%m-%d %H:%M:%S: ") + msg)
 
 
-def main_loop():
-    s = None
-    try:
-        s = socket.socket()
-        s.connect((HOST, PORT))
-        s.send("PASS {}\r\n".format(PASS).encode("utf-8"))
-        s.send("NICK {}\r\n".format(NICK).encode("utf-8"))
-        s.send("JOIN {}\r\n".format(CHAN).encode("utf-8"))
-        connected = True
-    except Exception as ex:
-        print(ex)
-        connected = False
+class tBot(object):
+    def __init__(self):
+        self.sock = socket.socket()
 
-    while connected:
+    def commands(self, username, message, messageLower):
+        if "!test" == messageLower:
+            self.chat("HAMSTER!")
+        elif '!deckel' == messageLower:
+            self.chat("!dackel")
+        elif '!woher' == messageLower:
+            self.chat("aus dem meer")
+        elif '!wohin' == messageLower:
+            self.chat("ins TOR natürlich!")
+        elif '!wovon' == messageLower:
+            self.chat("purer skill!!1!")
+        elif '!wann' == messageLower:
+            self.chat("bis dann o/")
+        elif '!wurm' == messageLower:
+            self.chat("~~~~~~~~~~~~~~~~~~~~~~~~O<")
+        elif '!wasstimmtdennmitdirnicht' == messageLower:
+            realitycheck(self)
+        elif '!hilfe' == message or '!help' == messageLower:
+            self.chat("help your self :P")
+        elif '!wassindhamster' == messageLower or '!hamster' == messageLower:
+            explainHamster(self)
+        elif '!go' == messageLower:
+            self.chat("@timkalation: GO GO TIM TIM GO GO!")
+        elif '!burn' == messageLower:
+            self.chat('🔥'*10)
+
+    def main_loop(self):
         try:
-            executor(s)
+            self.sock.connect((HOST, PORT))
+            self.sock.send("PASS {}\r\n".format(PASS).encode("utf-8"))
+            self.sock.send("NICK {}\r\n".format(NICK).encode("utf-8"))
+            self.sock.send("JOIN {}\r\n".format(CHAN).encode("utf-8"))
+            connected = True
         except Exception as ex:
             print(ex)
+            connected = False
 
-        sleep(0.1)
+        while connected:
+            try:
+                self.executor()
+            except Exception as ex:
+                print(ex)
 
-
-def executor(s):
-    """
-
-    :type s: socket.socket
-    """
-    response = s.recv(2048).decode("utf-8")
-    if response == "PING :tmi.twitch.tv\r\n":
-        s.send("PONG :tmi.twitch.tv\r\n".encode())
-        log("PONG")
-    else:
-        username = re.search(r"\w+", response).group(0)
-        message = CHAT_MSG.sub("", response)
-
-        message = message.strip()
-        messageLower = message.lower()
-
-        log(username + ": " + message)
-
-        if username == 'tmi' or username == config.NICK:
-            pass
-        elif message[0] == '!':
-            commands(s, username, message, messageLower)
-        elif 'hamster' in  message:
-            chat(s, "HAMSTER! \o/")
-        elif 'bison' in messageLower and ('hi ' in messageLower or 'hallo ' in messageLower or 'nabend ' in messageLower):
-            chat(s, "hi " + username + " o/")
-        elif 'nabend' in messageLower \
-                or 'moin' in messageLower \
-                or 'huhu' in messageLower \
-                or 'hallo' in messageLower \
-                or 'guten abend'in messageLower\
-                or 'servus'in messageLower:
-            chat(s, "ohai o/")
-        elif 'chemie ' in messageLower or ' chemie' in messageLower:
-            chat(s, "baukasten")
+            sleep(0.1)
 
 
-def chat(sock, msg):
-    """
+    def executor(self):
+        response = self.sock.recv(2048).decode("utf-8")
+        if response == "PING :tmi.twitch.tv\r\n":
+            self.sock.send("PONG :tmi.twitch.tv\r\n".encode())
+            log("PONG")
+        else:
+            username = re.search(r"\w+", response).group(0)
+            message = CHAT_MSG.sub("", response)
 
-    :type sock: socket.socket
-    :type msg: string
-    """
-    log('sending...')
-    sock.send("PRIVMSG {} :{}\r\n".format(CHAN, msg).encode())
+            message = message.strip()
+            messageLower = message.lower()
+
+            log(username + ": " + message)
+
+            if username == 'tmi' or username == config.NICK:
+                pass
+            elif message[0] == '!':
+                self.commands(username, message, messageLower)
+            elif 'hamster' in  message:
+                self.chat("HAMSTER! \o/")
+            elif 'bison' in messageLower and ('hi ' in messageLower or 'hallo ' in messageLower or 'nabend ' in messageLower):
+                self.chat("hi " + username + " o/")
+            elif 'nabend' in messageLower \
+                    or 'moin' in messageLower \
+                    or 'huhu' in messageLower \
+                    or 'hallo' in messageLower \
+                    or 'guten abend'in messageLower\
+                    or 'servus'in messageLower:
+                self.chat("ohai o/")
+            elif 'chemie ' in messageLower or ' chemie' in messageLower:
+                self.chat("baukasten")
+
+
+    def chat(self, msg):
+        """
+
+        :type sock: socket.socket
+        :type msg: string
+        """
+        log('sending...')
+        self.sock.send("PRIVMSG {} :{}\r\n".format(CHAN, msg).encode())
 
 
 if __name__ == "__main__":
-    main_loop()
+    bot = tBot()
+    bot.main_loop()
