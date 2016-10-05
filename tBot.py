@@ -215,7 +215,10 @@ class tBot(object):
                     or 'servus'in messageLower:
                 self.chat("ohai o/")
             elif 'momentum' in messageLower:
-                self.chat("@" + username + ' es gibt kein momentum!')
+                if username == 'varu7777777':
+                     self.chat("@" + username + ' und die erde ne scheibe :P')
+                else:
+                    self.chat("@" + username + ' es gibt kein momentum!')
             elif 'chemie ' in messageLower or ' chemie' in messageLower:
                 self.chat("baukasten")
 
