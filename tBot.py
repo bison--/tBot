@@ -4,6 +4,8 @@ import socket
 import time
 import os
 import json
+import shortTermMemory
+
 
 if os.path.isfile('config_local.py'):
     import config_local as config
@@ -99,6 +101,7 @@ class tBot(object):
         self.die = False
         self.dynamicCommandsFile = 'dynamicCommands.json'
         self.dynamicCommands = {}
+        self.chatMemory = shortTermMemory.shortTermMemory()
 
         dynamicCommandsTmp = loadJson(self.dynamicCommandsFile)
         if dynamicCommandsTmp is not None:
@@ -221,6 +224,12 @@ class tBot(object):
 
         :type msg: string
         """
+
+        if self.chatMemory.isInMemory(msg):
+            log('MEMORY BLOCK FOR: "' + msg + '"')
+            return False
+
+        self.chatMemory.add(msg, 30)
         log('sending...')
         self.sock.send("PRIVMSG {} :{}\r\n".format(CHAN, msg).encode())
 
