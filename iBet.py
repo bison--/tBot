@@ -36,6 +36,7 @@ class iBet(object):
                 return False
             else:
                 self.currentBetName = option
+                self.userBets = {}
                 self.tBot.chat('wette {} gestartet'.format(self.currentBetName))
         elif '!stop' == command:
             if username not in self.tBot.myMasters:
@@ -80,6 +81,19 @@ class iBet(object):
             wettString += ' | keine wetten mehr zulassen !wetten !gilt namederwette'
             wettString += ' | wette beenden !wetten !stop namederwette'
             self.tBot.chat(wettString)
+
+        elif '!status' == command:
+            countDict = {}
+            for key, value in self.userBets.items():
+                if not value in countDict:
+                    countDict[value] = 0
+                countDict[value] += 1
+
+            stateString = 'aktuelle wetten: '
+            for key, value in self.userBets.items():
+                stateString += key + ': ' + str(value) + 'x '
+
+            self.tBot.chat(stateString)
 
         elif '!das' ==  command:
             if not self.betsOpen:
