@@ -32,16 +32,24 @@ rofl die katz
 
 in german (sorry ^^)
 
-create a bet
- !wetten !start nameOfTheBet
+create a bet  
+```
+!wetten !start nameOfTheBet
+```
 
-place a bet:
- !wetten !das victory
- !wetten !das loose
- !wetten !das 1:3
+place a bet:  
+```
+!wetten !das victory
+!wetten !das loose 
+!wetten !das 1:3
+```
  
-stop accepting new bets
- !wetten !gilt nameOfTheBet
+stop accepting new bets  
+```
+!wetten !gilt nameOfTheBet
+```
 
-end the bet
- !wetten !stop nameOfTheBet
+end the bet  
+```
+!wetten !stop nameOfTheBet
+```
