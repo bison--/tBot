@@ -89,7 +89,7 @@ class iBet(object):
                     countDict[value] = 0
                 countDict[value] += 1
 
-            stateString = 'aktuelle wetten für {}: '.format(self.currentBetName)
+            stateString = 'aktuelle wetten fÃ¼r {}: '.format(self.currentBetName)
             for key, value in self.userBets.items():
                 stateString += key + ': ' + str(value) + 'x '
 
