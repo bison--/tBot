@@ -71,6 +71,12 @@ def explainHamster(bot):
     sleep(1.5)
 
 
+def getReadableTime(seconds):
+    m, s = divmod(seconds, 60)
+    h, m = divmod(m, 60)
+    return "%d h %02d m %02d s" % (h, m, s)
+
+
 def saveJson(file, data):
     try:
         with open(file, 'w') as data_file:
@@ -96,9 +102,14 @@ def log(msg):
 
 class tBot(object):
     def __init__(self):
+        self.startTime = time.time()
         self.sock = socket.socket()
         self.connected = False
         self.die = False
+
+        self.myMasters = {'timkalation', 'bison_42'}
+        self.revivedCounter = 0
+
         self.dynamicCommandsFile = 'dynamicCommands.json'
         self.dynamicCommands = {}
         self.chatMemory = shortTermMemory.shortTermMemory()
@@ -109,7 +120,6 @@ class tBot(object):
 
     def commands(self, username, message, messageLower):
         chatName = '@' + username
-        myMasters = {'timkalation', 'bison_42'}
 
         if "!test" == messageLower:
             self.chat("HAMSTER!")
@@ -138,14 +148,23 @@ class tBot(object):
         elif '!burn' == messageLower:
             self.chat('🔥'*10)
         elif '!kill' == messageLower:
-            if username in myMasters:
+            if username in self.myMasters:
                 self.chat('live long and prosper 🖖')
                 self.die = True
                 self.connected = False
             else:
                 self.chat(chatName + ' your kung fu is not strong enough!')
+        elif '!alive' == messageLower:
+            secondsAlive = time.time() - self.startTime
+            self.chat('ich bin seit {} sekunden / {} am leben und wurde {}x wiederbelebt'.format(secondsAlive, getReadableTime(secondsAlive), self.revivedCounter))
+        elif messageLower.startswith('!wetten'):
+            if not hasattr(self, 'wette'):
+                import iBet
+                self.wette = iBet.iBet(self)
+
+            self.wette.commands(username, message, messageLower)
         elif message.startswith('!add'):
-            if username in myMasters:
+            if username in self.myMasters:
                 cmdParts = message.split(' ')
                 if len(cmdParts) <= 3:
                     self.chat(chatName + ' this is wrong -.-')
@@ -170,6 +189,7 @@ class tBot(object):
             self.sock.send("NICK {}\r\n".format(NICK).encode("utf-8"))
             self.sock.send("JOIN {}\r\n".format(CHAN).encode("utf-8"))
             self.connected = True
+            self.chat('hallo alle o/')
         except Exception as ex:
             self.connected = False
             print(ex)
@@ -186,7 +206,14 @@ class tBot(object):
         log('PASSED AWAY')
 
     def executor(self):
-        response = self.sock.recv(2048).decode("utf-8")
+        response = self.sock.recv(2048)
+
+        try:
+            response = response.decode("utf-8")
+        except Exception as ex:
+            print('response.decode ERROR: ' + str(ex))
+            response = '-'
+
         if response == "PING :tmi.twitch.tv\r\n":
             self.sock.send("PONG :tmi.twitch.tv\r\n".encode())
             log("PONG")
@@ -234,7 +261,10 @@ class tBot(object):
 
         self.chatMemory.add(msg, 30)
         log('sending...')
-        self.sock.send("PRIVMSG {} :{}\r\n".format(CHAN, msg).encode())
+        try:
+            self.sock.send("PRIVMSG {} :{}\r\n".format(CHAN, msg).encode())
+        except Exception as ex:
+            log('CHAT SEND ERROR: ' + str(ex))
 
 
 if __name__ == "__main__":
@@ -244,6 +274,7 @@ if __name__ == "__main__":
         revivedCount += 1
         log('REVIVED: ' + str(revivedCount))
         bot = tBot()
+        bot.revivedCounter = revivedCount
         bot.main_loop()
         if bot.die:
             keepRunning = False
