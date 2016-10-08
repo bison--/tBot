@@ -108,7 +108,7 @@ class tBot(object):
         self.die = False
 
         self.myMasters = {'timkalation', 'bison_42'}
-        self.mySubMasters = {'tomblex',}
+        self.mySubMasters = {'tomblex', 'Racesore'}
         for master in self.myMasters:
             self.mySubMasters.add(master)
         self.revivedCounter = 0
