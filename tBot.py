@@ -206,7 +206,7 @@ class tBot(object):
         elif message.startswith('!add'):
             if False and self.checkMaster(username):
                 cmdParts = message.split(' ')
-                if len(cmdParts) <= 3:
+                if len(cmdParts) < 3:
                     self.chat(chatName + ' this is wrong -.-')
                 else:
                     cmdKey = cmdParts[1]
