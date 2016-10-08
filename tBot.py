@@ -171,6 +171,7 @@ class tBot(object):
                     self.isSilent = True
         elif '!kill' == messageLower:
             if self.checkMaster(username):
+                self.isSilent = False
                 self.chat('live long and prosper 🖖')
                 self.die = True
                 self.connected = False
