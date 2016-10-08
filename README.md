@@ -1,5 +1,15 @@
 my ghost in the shell
 
+## setup
+
+This bot does not use the bot-api, it connects to the irc-server. Yes, twitch is using good old irc. That makes it fairly easy to create a bot.
+
+* creat an user account on twitch the bot should use (you probably dont want to use your account!).
+* go to: http://www.twitchapps.com/tmi/ create and grab your oauth token
+* edit the config.py according to your needs (the oauth token is your "password"!)
+* start the bot with `python3 tBot.py`
+* profit
+
 ## add a command
 
 to add a command follow these steps:
