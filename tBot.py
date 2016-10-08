@@ -136,18 +136,18 @@ class tBot(object):
 
         if "!test" == messageLower:
             self.chat("HAMSTER!")
-        elif '!lupfer' == messageLower:
-            self.chat('lupfe die lupf hupf ¯\_(ツ)_/¯')
-        elif '!deckel' == messageLower:
-            self.chat("!dackel")
-        elif '!woher' == messageLower:
-            self.chat("aus dem meer")
-        elif '!wohin' == messageLower:
-            self.chat("ins TOR natürlich!")
-        elif '!wovon' == messageLower:
-            self.chat("purer skill!!1!")
-        elif '!wann' == messageLower:
-            self.chat("bis dann o/")
+        #elif '!lupfer' == messageLower:
+        #    self.chat('lupfe die lupf hupf ¯\_(ツ)_/¯')
+        #elif '!deckel' == messageLower:
+        #    self.chat("!dackel")
+        #elif '!woher' == messageLower:
+        #    self.chat("aus dem meer")
+        #elif '!wohin' == messageLower:
+        #    self.chat("ins TOR natürlich!")
+        #elif '!wovon' == messageLower:
+        #    self.chat("purer skill!!1!")
+        #elif '!wann' == messageLower:
+        #    self.chat("bis dann o/")
         elif '!wurm' == messageLower:
             self.chat("~~~~~~~~~~~~~~~~~~~~~~~~O<")
         elif '!wasstimmtdennmitdirnicht' == messageLower:
@@ -204,7 +204,7 @@ class tBot(object):
                 self.chat('Die Matchreihenfolge lautet wie folgt: ' + finalStr)
 
         elif message.startswith('!add'):
-            if self.checkMaster(username):
+            if False and self.checkMaster(username):
                 cmdParts = message.split(' ')
                 if len(cmdParts) <= 3:
                     self.chat(chatName + ' this is wrong -.-')
