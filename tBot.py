@@ -114,11 +114,22 @@ class tBot(object):
         self.dynamicCommands = {}
         self.chatMemory = shortTermMemory.shortTermMemory()
 
+        self.isSilent = False
         self.matchList = []
 
         dynamicCommandsTmp = loadJson(self.dynamicCommandsFile)
         if dynamicCommandsTmp is not None:
            self.dynamicCommands = dynamicCommandsTmp
+
+    def checkMaster(self, username, message=''):
+        if username in self.myMasters:
+            return True
+        else:
+            if message == '':
+                self.chat('@' + username + ' your kung fu is not strong enough!')
+            else:
+                self.chat(message)
+            return False
 
     def commands(self, username, message, messageLower):
         chatName = '@' + username
@@ -149,13 +160,20 @@ class tBot(object):
             self.chat("@timkalation: GO GO TIM TIM GO GO!")
         elif '!burn' == messageLower:
             self.chat('🔥'*10)
+
+        elif '!silence' == messageLower:
+            if self.checkMaster(username):
+                if self.isSilent:
+                    self.chat(chatName + ' deactivating stealth-mode')
+                    self.isSilent = False
+                else:
+                    self.chat(chatName + ' I am going to stealth-mode now!')
+                    self.isSilent = True
         elif '!kill' == messageLower:
-            if username in self.myMasters:
+            if self.checkMaster(username):
                 self.chat('live long and prosper 🖖')
                 self.die = True
                 self.connected = False
-            else:
-                self.chat(chatName + ' your kung fu is not strong enough!')
         elif '!alive' == messageLower:
             secondsAlive = time.time() - self.startTime
             self.chat('ich bin seit {} sekunden / {} am leben und wurde {}x wiederbelebt'.format(secondsAlive, getReadableTime(secondsAlive), self.revivedCounter))
@@ -173,11 +191,9 @@ class tBot(object):
                     self.matchList.append(username)
                     self.chat(chatName + ' du bist jetzt in der liste an Platz ' + str(self.matchList.index(username) + 1))
             elif messageLower == '!matchclear':
-                if username in self.myMasters:
+                if self.checkMaster(username):
                     self.matchList = []
                     self.chat(chatName + ' match liste wurde gelöscht!')
-                else:
-                    self.chat(chatName + ' your kung fu is not strong enough!')
             elif messageLower == '!matchlist':
                 finalStr = ''
                 index = 1
@@ -187,7 +203,7 @@ class tBot(object):
                 self.chat('Die Matchreihenfolge lautet wie folgt: ' + finalStr)
 
         elif message.startswith('!add'):
-            if username in self.myMasters:
+            if self.checkMaster(username):
                 cmdParts = message.split(' ')
                 if len(cmdParts) <= 3:
                     self.chat(chatName + ' this is wrong -.-')
@@ -200,8 +216,7 @@ class tBot(object):
                         self.chat(chatName + ' i added "' + cmdKey + '" to my quest log!')
                     self.dynamicCommands[cmdKey] = cmdText
                     saveJson(self.dynamicCommandsFile, self.dynamicCommands)
-            else:
-                self.chat(chatName + ' your kung fu is not strong enough!')
+
         elif message in self.dynamicCommands:
             self.chat(self.dynamicCommands[message])
 
@@ -282,8 +297,10 @@ class tBot(object):
             log('MEMORY BLOCK FOR: "' + msg + '"')
             return False
 
+        if self.isSilent:
+            log('stealth-mode: "' + msg + '"')
         self.chatMemory.add(msg, 30)
-        log('sending...')
+        log('sending... "' + msg + '"')
         try:
             self.sock.send("PRIVMSG {} :{}\r\n".format(CHAN, msg).encode())
         except Exception as ex:
