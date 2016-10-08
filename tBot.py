@@ -164,8 +164,8 @@ class tBot(object):
         elif '!silence' == messageLower:
             if self.checkMaster(username):
                 if self.isSilent:
-                    self.chat(chatName + ' deactivating stealth-mode')
                     self.isSilent = False
+                    self.chat(chatName + ' deactivating stealth-mode')
                 else:
                     self.chat(chatName + ' I am going to stealth-mode now!')
                     self.isSilent = True
