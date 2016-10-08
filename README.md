@@ -63,3 +63,15 @@ end the bet
 ```
 !wetten !stop nameOfTheBet
 ```
+
+## match
+
+The match-module is a simple list for things like "who plays against me first".
+
+* `!match` adds your username to the match list
+* `!matchlist` shows the current match list
+* `!matchclear` be timkalation or bison, clears the current match list
+
+## other commands
+
+* `!silence` activate/deactivate ALL chats from the bot
