@@ -176,6 +176,8 @@ class tBot(object):
                 if username in self.myMasters:
                     self.matchList = []
                     self.chat(chatName + ' match liste wurde gelöscht!')
+                else:
+                    self.chat(chatName + ' your kung fu is not strong enough!')
             elif messageLower == '!matchlist':
                 finalStr = ''
                 index = 1
