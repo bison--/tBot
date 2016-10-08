@@ -114,6 +114,8 @@ class tBot(object):
         self.dynamicCommands = {}
         self.chatMemory = shortTermMemory.shortTermMemory()
 
+        self.matchList = []
+
         dynamicCommandsTmp = loadJson(self.dynamicCommandsFile)
         if dynamicCommandsTmp is not None:
            self.dynamicCommands = dynamicCommandsTmp
@@ -161,8 +163,27 @@ class tBot(object):
             if not hasattr(self, 'wette'):
                 import iBet
                 self.wette = iBet.iBet(self)
-
             self.wette.commands(username, message, messageLower)
+
+        elif messageLower.startswith('!match'):
+            if messageLower == '!match':
+                if username in self.matchList:
+                    self.chat(chatName + ' du bist schon in der liste an Platz ' + str(self.matchList.index(username)))
+                else:
+                    self.matchList.append(username)
+                    self.chat(chatName + ' du bist jetzt in der liste an Platz ' + str(self.matchList.index(username)))
+            elif messageLower == '!matchclear':
+                if username in self.myMasters:
+                    self.matchList = []
+                    self.chat(chatName + ' match liste wurde gelöscht!')
+            elif messageLower == '!matchlist':
+                finalStr = ''
+                index = 1
+                for player in self.matchList:
+                    finalStr += '{}. {}, '.format(index, player)
+                    index += 1
+                self.chat('Die Matchreihenfolge lautet wie folgt: ' + finalStr)
+
         elif message.startswith('!add'):
             if username in self.myMasters:
                 cmdParts = message.split(' ')
