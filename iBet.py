@@ -31,14 +31,14 @@ class iBet(object):
 
         if '!start' == command:
             self.betsOpen = True
-            if not self.tBot.checkMaster(username, chatName + ' you are not my master!'):
+            if not self.tBot.checkSubMaster(username, chatName + ' you are not my master!'):
                 return False
             else:
                 self.currentBetName = option
                 self.userBets = {}
                 self.tBot.chat('wette {} gestartet'.format(self.currentBetName))
         elif '!stop' == command:
-            if not self.tBot.checkMaster(username, chatName + ' you are not my master!'):
+            if not self.tBot.checkSubMaster(username, chatName + ' you are not my master!'):
                 #self.tBot.chat(chatName + ' you are not my master!')
                 return False
             else:
@@ -66,8 +66,7 @@ class iBet(object):
                 self.tBot.chat('gewonnen haben ' + ', '.join(winnerList) + ' und verloren haben ' + ', '.join(loserList))
 
         elif '!gilt' == command:
-            if username not in self.tBot.myMasters:
-                self.tBot.chat(chatName + ' you are not my master!')
+            if not self.tBot.checkSubMaster(username, chatName + ' you are not my master!'):
                 return False
             else:
                 self.betsOpen = False

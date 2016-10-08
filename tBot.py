@@ -108,6 +108,7 @@ class tBot(object):
         self.die = False
 
         self.myMasters = {'timkalation', 'bison_42'}
+        self.mySubMasters = ['tomblex',] + self.mySubMasters
         self.revivedCounter = 0
 
         self.dynamicCommandsFile = 'dynamicCommands.json'
@@ -123,6 +124,16 @@ class tBot(object):
 
     def checkMaster(self, username, message=''):
         if username in self.myMasters:
+            return True
+        else:
+            if message == '':
+                self.chat('@' + username + ' your kung fu is not strong enough!')
+            else:
+                self.chat(message)
+            return False
+
+    def checkSubMaster(self, username, message=''):
+        if username in self.mySubMasters:
             return True
         else:
             if message == '':
