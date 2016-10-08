@@ -168,10 +168,10 @@ class tBot(object):
         elif messageLower.startswith('!match'):
             if messageLower == '!match':
                 if username in self.matchList:
-                    self.chat(chatName + ' du bist schon in der liste an Platz ' + str(self.matchList.index(username)))
+                    self.chat(chatName + ' du bist schon in der liste an Platz ' + str(self.matchList.index(username) + 1))
                 else:
                     self.matchList.append(username)
-                    self.chat(chatName + ' du bist jetzt in der liste an Platz ' + str(self.matchList.index(username)))
+                    self.chat(chatName + ' du bist jetzt in der liste an Platz ' + str(self.matchList.index(username) + 1))
             elif messageLower == '!matchclear':
                 if username in self.myMasters:
                     self.matchList = []
