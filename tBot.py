@@ -108,7 +108,9 @@ class tBot(object):
         self.die = False
 
         self.myMasters = {'timkalation', 'bison_42'}
-        self.mySubMasters = ['tomblex',] + self.myMasters
+        self.mySubMasters = {'tomblex',}
+        for master in self.myMasters:
+            self.mySubMasters.add(master)
         self.revivedCounter = 0
 
         self.dynamicCommandsFile = 'dynamicCommands.json'
