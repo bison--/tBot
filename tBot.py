@@ -117,7 +117,7 @@ class tBot(object):
         self.dynamicCommands = {}
         self.chatMemory = shortTermMemory.shortTermMemory()
 
-        self.isSilent = False
+        self.isSilent = config.START_SILENT
         self.matchList = []
 
         dynamicCommandsTmp = loadJson(self.dynamicCommandsFile)
@@ -329,9 +329,11 @@ class tBot(object):
             '''
 
             for name in data['chatters']['viewers']:
-                newUsers.add(name)
+                if name is not config.NICK:
+                    newUsers.add(name)
             for name in data['chatters']['moderators']:
-                newUsers.add(name)
+                if name is not config.NICK:
+                    newUsers.add(name)
 
             self.usersInChat = newUsers
             print(self.usersInChat)
@@ -350,12 +352,17 @@ class tBot(object):
 
         if self.isSilent:
             log('stealth-mode: "' + msg + '"')
+            return False
+
         self.chatMemory.add(msg, 30)
         log('sending... "' + msg + '"')
         try:
             self.sock.send("PRIVMSG {} :{}\r\n".format(CHAN, msg).encode())
         except Exception as ex:
             log('CHAT SEND ERROR: ' + str(ex))
+            return False
+
+        return True
 
 
 if __name__ == "__main__":
