@@ -124,6 +124,9 @@ class tBot(object):
         if dynamicCommandsTmp is not None:
            self.dynamicCommands = dynamicCommandsTmp
 
+        self.usersInChatLastRefresh = 0
+        self.usersInChat = set()
+
     def checkMaster(self, username, message=''):
         if username in self.myMasters:
             return True
@@ -249,6 +252,7 @@ class tBot(object):
 
         while self.connected:
             try:
+                self.getUsers()
                 self.executor()
             except Exception as ex:
                 self.connected = False
@@ -301,6 +305,38 @@ class tBot(object):
                     self.chat("@" + username + ' es gibt kein momentum!')
             elif 'chemie ' in messageLower or ' chemie' in messageLower:
                 self.chat("baukasten")
+
+    def getUsers(self, forceLoad=False):
+        #https://tmi.twitch.tv/group/user/timkalation/chatters
+        #http://tmi.twitch.tv/group/user/timkalation/chat_stream
+        if forceLoad or self.usersInChatLastRefresh + 10 < time.time():
+            self.usersInChatLastRefresh = time.time()
+            newUsers = set()
+            import json
+            from urllib.request import urlopen
+            url = 'https://tmi.twitch.tv/group/user/' + config.CHAN.replace('#', '') + '/chatters'
+            response = urlopen(url)
+            data = json.loads(response.read().decode('utf-8'))
+            '''
+                {'chatters':
+                        {'admins': [], 'staff': [],
+                            'viewers': ['bisons_ghost', 'okalot'], 'global_mods': [],
+                            'moderators': ['bison_42', 'moobot', 'nightbot', 'timkalation']
+                        },
+                        '_links': {},
+                        'chatter_count': 18
+                }
+            '''
+
+            for name in data['chatters']['viewers']:
+                newUsers.add(name)
+            for name in data['chatters']['moderators']:
+                newUsers.add(name)
+
+            self.usersInChat = newUsers
+            print(self.usersInChat)
+
+        return self.usersInChat
 
     def chat(self, msg):
         """
