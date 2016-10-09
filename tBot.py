@@ -3,8 +3,8 @@ from time import sleep
 import socket
 import time
 import os
-import json
 import shortTermMemory
+import helper
 
 
 if os.path.isfile('config_local.py'):
@@ -26,85 +26,11 @@ CHAN = config.CHAN
 CHAT_MSG = re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
 
 
-def realitycheck(bot):
-    """
-
-    :param bot: tBot
-    """
-    checks = [
-        '''13.06.2016 10:44 :~: Einmal Popcorn bitte. 50 Liter.
-
-        Reality
-        Ich höre: "Forever alone"
-
-        Story
-        Ich habe eine Szene aus Indiana Jones und der Tempel des Todes im Kopf und denke: "Die Insekten lassen dich niemals allein."''',
-
-        '''02.06.2016 20:52 :~: Saudi Arabi Money Rich
-
-        Reality
-        Ich lese auf Twitter: "Haftbefehl gegen mutmaßlichen IS-Terroristen."
-
-        Story
-        Ich frage mich, was mehr Terror bedeutet. So eine kleine Explosion oder 3:28 Gesinge von Chabos und Babos?''',
-
-        '''13.02.2016 17:54 :~: Die Stange war zu kurz
-
-        Reality
-        Eine neue Person betritt den Raum. Bewaffnet mit Hut und Heißklebepistole läuft sie zielstrebig auf jemanden zu. Dieser ist allerdings nicht zu Gesprächen aufgelegt...
-        Story
-        ... und sagt: "Gib mal kurz!", schnappt sich die Heißklebepistole, hält sie sich an die Schläfe und drückt ab.'''
-    ]
-    import random
-    for line in random.choice(checks).split("\n"):
-        bot.chat(line)
-
-
-def explainHamster(bot):
-    """
-
-    :param bot: tBot
-    """
-    bot.chat("HAMSTER sind im grunde genau wie Zigaretten...")
-    sleep(1.5)
-    bot.chat("Vollkommen harmlos... bis man sie sich in den Mund steckt und anzündet!")
-    sleep(1.5)
-
-
-def getReadableTime(seconds):
-    m, s = divmod(seconds, 60)
-    h, m = divmod(m, 60)
-    return "%d h %02d m %02d s" % (h, m, s)
-
-
-def saveJson(file, data):
-    try:
-        with open(file, 'w') as data_file:
-            json.dump(data, data_file)
-    except Exception as ex:
-        print(ex)
-
-
-def loadJson(file):
-    data = None
-    try:
-        with open(file) as data_file:
-            data = json.load(data_file)
-    except Exception as ex:
-        print(ex)
-
-    return data
-
-
-def log(msg):
-    print(time.strftime("%Y-%m-%d %H:%M:%S: ") + msg)
-
-
 class tBot(object):
     def __init__(self):
         self.startTime = time.time()
         self.sock = socket.socket()
-        self.sock.setdefaulttimeout(2.0)
+        self.sock.settimeout(2.0)
         self.connected = False
         self.die = False
 
@@ -121,7 +47,7 @@ class tBot(object):
         self.isSilent = config.START_SILENT
         self.matchList = []
 
-        dynamicCommandsTmp = loadJson(self.dynamicCommandsFile)
+        dynamicCommandsTmp = helper.loadJson(self.dynamicCommandsFile)
         if dynamicCommandsTmp is not None:
            self.dynamicCommands = dynamicCommandsTmp
 
@@ -168,11 +94,11 @@ class tBot(object):
         elif '!wurm' == messageLower:
             self.chat("~~~~~~~~~~~~~~~~~~~~~~~~O<")
         elif '!wasstimmtdennmitdirnicht' == messageLower:
-            realitycheck(self)
+            helper.realitycheck(self)
         elif '!hilfe' == message or '!help' == messageLower:
             self.chat("help your self :P")
         elif '!wassindhamster' == messageLower or '!hamster' == messageLower:
-            explainHamster(self)
+            helper.explainHamster(self)
         elif '!go' == messageLower:
             self.chat("@timkalation: GO GO TIM TIM GO GO!")
         elif '!burn' == messageLower:
@@ -195,7 +121,7 @@ class tBot(object):
                 self.connected = False
         elif '!alive' == messageLower:
             secondsAlive = time.time() - self.startTime
-            self.chat('ich bin seit {} sekunden / {} am leben und wurde {}x wiederbelebt'.format(secondsAlive, getReadableTime(secondsAlive), self.revivedCounter))
+            self.chat('ich bin seit {} sekunden / {} am leben und wurde {}x wiederbelebt'.format(secondsAlive, helper.getReadableTime(secondsAlive), self.revivedCounter))
         elif messageLower.startswith('!wetten'):
             if not hasattr(self, 'wette'):
                 import iBet
@@ -234,7 +160,7 @@ class tBot(object):
                     else:
                         self.chat(chatName + ' i added "' + cmdKey + '" to my quest log!')
                     self.dynamicCommands[cmdKey] = cmdText
-                    saveJson(self.dynamicCommandsFile, self.dynamicCommands)
+                    helper.saveJson(self.dynamicCommandsFile, self.dynamicCommands)
 
         elif message in self.dynamicCommands:
             self.chat(self.dynamicCommands[message])
@@ -261,25 +187,25 @@ class tBot(object):
 
             sleep(0.1)
 
-        log('PASSED AWAY')
+        helper.log('PASSED AWAY')
 
     def executor(self):
-
         response = None
         try:
             received = self.sock.recv(2048)
             response = received.decode("utf-8")
         except socket.timeout:
+            helper.log('timeout')
             pass
         except Exception as ex:
-            log('FATAL recv ERROR: ' + str(ex))
+            helper.log('FATAL recv ERROR: ' + str(ex))
 
         if response is None:
             return False
 
         if response == "PING :tmi.twitch.tv\r\n":
             self.sock.send("PONG :tmi.twitch.tv\r\n".encode())
-            log("PONG")
+            helper.log("PONG")
         else:
             username = re.search(r"\w+", response).group(0)
             message = CHAT_MSG.sub("", response)
@@ -287,7 +213,7 @@ class tBot(object):
             message = message.strip()
             messageLower = message.lower()
 
-            log(username + ": " + message)
+            helper.log(username + ': ' + message)
 
             if username == 'tmi' or username == config.NICK:
                 pass
@@ -345,7 +271,7 @@ class tBot(object):
 
                 self.usersInChat = newUsers
             except Exception as ex:
-                log('getUsers ERROR: ' + str(ex))
+                helper.log('getUsers ERROR: ' + str(ex))
 
         return self.usersInChat
 
@@ -356,19 +282,19 @@ class tBot(object):
         """
 
         if self.chatMemory.isInMemory(msg):
-            log('MEMORY BLOCK FOR: "' + msg + '"')
+            helper.log('MEMORY BLOCK FOR: "' + msg + '"')
             return False
 
         if self.isSilent:
-            log('stealth-mode: "' + msg + '"')
+            helper.log('stealth-mode: "' + msg + '"')
             return False
 
         self.chatMemory.add(msg, 30)
-        log('sending... "' + msg + '"')
+        helper.log('sending... "' + msg + '"')
         try:
             self.sock.send("PRIVMSG {} :{}\r\n".format(CHAN, msg).encode())
         except Exception as ex:
-            log('CHAT SEND ERROR: ' + str(ex))
+            helper.log('CHAT SEND ERROR: ' + str(ex))
             return False
 
         return True
@@ -379,7 +305,7 @@ if __name__ == "__main__":
     revivedCount = 0
     while keepRunning:
         revivedCount += 1
-        log('REVIVED: ' + str(revivedCount))
+        helper.log('REVIVED: ' + str(revivedCount))
         bot = tBot()
         bot.revivedCounter = revivedCount
         bot.main_loop()
@@ -388,4 +314,4 @@ if __name__ == "__main__":
         else:
             sleep(10 * 60)
 
-log('DEAD!')
+helper.log('DEAD!')
