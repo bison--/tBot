@@ -104,6 +104,7 @@ class tBot(object):
     def __init__(self):
         self.startTime = time.time()
         self.sock = socket.socket()
+        self.sock.setdefaulttimeout(2.0)
         self.connected = False
         self.die = False
 
@@ -263,13 +264,18 @@ class tBot(object):
         log('PASSED AWAY')
 
     def executor(self):
-        response = self.sock.recv(2048)
 
+        response = None
         try:
-            response = response.decode("utf-8")
+            received = self.sock.recv(2048)
+            response = received.decode("utf-8")
+        except socket.timeout:
+            pass
         except Exception as ex:
-            print('response.decode ERROR: ' + str(ex))
-            response = '-'
+            log('FATAL recv ERROR: ' + str(ex))
+
+        if response is None:
+            return False
 
         if response == "PING :tmi.twitch.tv\r\n":
             self.sock.send("PONG :tmi.twitch.tv\r\n".encode())
@@ -305,6 +311,7 @@ class tBot(object):
                     self.chat("@" + username + ' es gibt kein momentum!')
             elif 'chemie ' in messageLower or ' chemie' in messageLower:
                 self.chat("baukasten")
+        return True
 
     def getUsers(self, forceLoad=False):
         #https://tmi.twitch.tv/group/user/timkalation/chatters
