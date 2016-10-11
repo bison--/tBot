@@ -219,17 +219,8 @@ class tBot(object):
                 pass
             elif message[0] == '!':
                 self.commands(username, message, messageLower)
-            elif 'hamster' in  message:
-                self.chat("HAMSTER! \o/")
             elif 'bison' in messageLower and ('hi ' in messageLower or 'hallo ' in messageLower or 'nabend ' in messageLower):
                 self.chat("hi " + username + " o/")
-            elif 'nabend' in messageLower \
-                    or 'moin' in messageLower \
-                    or 'huhu' in messageLower \
-                    or 'hallo' in messageLower \
-                    or 'guten abend'in messageLower\
-                    or 'servus'in messageLower:
-                self.chat("ohai o/")
             elif 'momentum' in messageLower:
                 if username == 'varu7777777':
                      self.chat("@" + username + ' und die erde ne scheibe :P')
@@ -237,6 +228,16 @@ class tBot(object):
                     self.chat("@" + username + ' es gibt kein momentum!')
             elif 'chemie ' in messageLower or ' chemie' in messageLower:
                 self.chat("baukasten")
+            elif 'hamster' in  messageLower:
+                self.chat("HAMSTER! \o/")
+            elif len(messageLower) <= 42:
+                if 'nabend' in messageLower \
+                    or 'moin' in messageLower \
+                    or 'huhu' in messageLower \
+                    or 'hallo' in messageLower \
+                    or 'guten abend'in messageLower \
+                    or 'servus'in messageLower:
+                    self.chat("ohai o/")
         return True
 
     def getUsers(self, forceLoad=False):
