@@ -147,8 +147,8 @@ class tBot(object):
                     index += 1
                 self.chat('Die Matchreihenfolge lautet wie folgt: ' + finalStr)
 
-        elif message.startswith('!add'):
-            if False and self.checkMaster(username):
+        elif message.startswith('!!add'):
+            if self.checkMaster(username):
                 cmdParts = message.split(' ')
                 if len(cmdParts) < 3:
                     self.chat(chatName + ' this is wrong -.-')
@@ -242,7 +242,7 @@ class tBot(object):
     def getUsers(self, forceLoad=False):
         #https://tmi.twitch.tv/group/user/timkalation/chatters
         #http://tmi.twitch.tv/group/user/timkalation/chat_stream
-        if forceLoad or self.usersInChatLastRefresh + 10 < time.time():
+        if False and (forceLoad or self.usersInChatLastRefresh + 10 < time.time()):
             try:
                 self.usersInChatLastRefresh = time.time()
                 newUsers = set()
