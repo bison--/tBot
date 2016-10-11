@@ -195,7 +195,7 @@ class tBot(object):
             received = self.sock.recv(2048)
             response = received.decode("utf-8")
         except socket.timeout:
-            helper.log('timeout')
+            #helper.log('timeout')
             pass
         except Exception as ex:
             helper.log('FATAL recv ERROR: ' + str(ex))
