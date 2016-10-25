@@ -31,6 +31,7 @@ class tBot(object):
         self.startTime = time.time()
         self.sock = socket.socket()
         self.sock.settimeout(2.0)
+        self.timeoutCounter = 0
         self.connected = False
         self.die = False
 
@@ -194,11 +195,18 @@ class tBot(object):
         try:
             received = self.sock.recv(2048)
             response = received.decode("utf-8")
+            self.timeoutCounter = 0
         except socket.timeout:
             #helper.log('timeout')
-            pass
+            self.timeoutCounter += 1
         except Exception as ex:
+            self.connected = False
             helper.log('FATAL recv ERROR: ' + str(ex))
+
+        if self.timeoutCounter >= 100:
+            helper.log('timeoutCounter ERROR: ' + str(self.timeoutCounter))
+            self.connected = False
+            return False
 
         if response is None:
             return False
