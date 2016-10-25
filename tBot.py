@@ -163,6 +163,17 @@ class tBot(object):
                     self.dynamicCommands[cmdKey] = cmdText
                     helper.saveJson(self.dynamicCommandsFile, self.dynamicCommands)
 
+        elif message.startswith('!!del'):
+            if self.checkMaster(username):
+                cmdParts = message.split(' ')
+                if len(cmdParts) != 2:
+                    self.chat(chatName + ' this is wrong -.-')
+                else:
+                    cmdKey = cmdParts[1]
+                    self.chat(chatName + ' i will drop my quest for "' + cmdKey + '"')
+                    del self.dynamicCommands[cmdKey]
+                    helper.saveJson(self.dynamicCommandsFile, self.dynamicCommands)
+
         elif message in self.dynamicCommands:
             self.chat(self.dynamicCommands[message])
 
