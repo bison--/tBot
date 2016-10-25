@@ -254,11 +254,11 @@ class tBot(object):
                 self.chat("HAMSTER! \o/")
             elif len(messageLower) <= 42:
                 if 'nabend' in messageLower \
-                    or 'moin' in messageLower \
-                    or 'huhu' in messageLower \
-                    or 'hallo' in messageLower \
-                    or 'guten abend'in messageLower \
-                    or 'servus'in messageLower:
+                        or 'moin' in messageLower \
+                        or 'huhu' in messageLower \
+                        or 'hallo' in messageLower \
+                        or 'guten abend'in messageLower \
+                        or 'servus'in messageLower:
                     self.chat("ohai o/")
         return True
 
