@@ -31,6 +31,17 @@ and the bot wil write to the chat:
 rofl die katz
 ```
 
+## del a command
+
+to remove a command follow these steps:
+
+* be **@timkalation** or **@bison_42**
+* type **!del** then the new command (like **!hype**)
+
+```
+!!del !lol
+```
+
 ## kill the ghost
 
 * be **@timkalation** or **@bison_42**
