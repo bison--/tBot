@@ -170,9 +170,12 @@ class tBot(object):
                     self.chat(chatName + ' this is wrong -.-')
                 else:
                     cmdKey = cmdParts[1]
-                    self.chat(chatName + ' i will drop my quest for "' + cmdKey + '"')
-                    del self.dynamicCommands[cmdKey]
-                    helper.saveJson(self.dynamicCommandsFile, self.dynamicCommands)
+                    if cmdKey not in self.dynamicCommands:
+                        self.chat('sorry ' + chatName + ', i dont have "' + cmdKey + '" in my quest log... :(')
+                    else:
+                        self.chat(chatName + ' i will drop my quest for "' + cmdKey + '"')
+                        del self.dynamicCommands[cmdKey]
+                        helper.saveJson(self.dynamicCommandsFile, self.dynamicCommands)
 
         elif message in self.dynamicCommands:
             self.chat(self.dynamicCommands[message])
