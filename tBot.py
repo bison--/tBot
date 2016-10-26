@@ -24,13 +24,13 @@ NICK = config.NICK
 PASS = config.PASS
 CHAN = config.CHAN
 CHAT_MSG = re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
-
+SOCKET_TIMEOUT = 2.0
 
 class tBot(object):
     def __init__(self):
         self.startTime = time.time()
         self.sock = socket.socket()
-        self.sock.settimeout(2.0)
+        self.sock.settimeout(SOCKET_TIMEOUT)
         self.timeoutCounter = 0
         self.connected = False
         self.die = False
@@ -217,7 +217,7 @@ class tBot(object):
             self.connected = False
             helper.log('FATAL recv ERROR: ' + str(ex))
 
-        if self.timeoutCounter >= 100:
+        if self.timeoutCounter >= 400:
             helper.log('timeoutCounter ERROR: ' + str(self.timeoutCounter))
             self.connected = False
             return False
