@@ -251,6 +251,7 @@ class tBot(object):
                 elif not self.timerMemory.isInMemory(intervalKey):
                     self.chat(intervalKey)
                     self.timerMemory.add(intervalKey, intervalTime)
+                    sleep(2.2)
 
             if username == 'tmi' or username == config.NICK:
                 pass
