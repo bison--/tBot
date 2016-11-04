@@ -22,7 +22,7 @@ class shortTermMemory(object):
 
     def isInMemory(self, data):
         if self.autoClean:
-            self.clean()
+            self.clean(0)
 
         for memory in self.memoryList:
             if memory.data == data:
