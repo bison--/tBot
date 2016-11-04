@@ -229,8 +229,15 @@ class tBot(object):
             self.sock.send("PONG :tmi.twitch.tv\r\n".encode())
             helper.log("PONG")
         else:
-            username = re.search(r"\w+", response).group(0)
-            message = CHAT_MSG.sub("", response)
+            username = ''
+            message = ''
+            try:
+                #'NoneType' object has no attribute 'group'
+                username = re.search(r"\w+", response).group(0)
+                message = CHAT_MSG.sub("", response)
+            except Exception as ex:
+                helper.log(str(ex) + ' response:' + response)
+                return False
 
             message = message.strip()
             messageLower = message.lower()
@@ -335,6 +342,6 @@ if __name__ == "__main__":
         if bot.die:
             keepRunning = False
         else:
-            sleep(10 * 60)
+            sleep(config.REANIMATE_IN_SECONDS)
 
 helper.log('DEAD!')
