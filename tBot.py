@@ -36,7 +36,7 @@ class tBot(object):
         self.die = False
 
         self.myMasters = {'timkalation', 'bison_42'}
-        self.mySubMasters = {'tomblex', 'Racesore'}
+        self.mySubMasters = {'tomblex', 'Racesore', 'Plantprogrammer'}
         for master in self.myMasters:
             self.mySubMasters.add(master)
         self.revivedCounter = 0
@@ -44,6 +44,7 @@ class tBot(object):
         self.dynamicCommandsFile = 'dynamicCommands.json'
         self.dynamicCommands = {}
         self.chatMemory = shortTermMemory.shortTermMemory()
+        self.timerMemory = shortTermMemory.shortTermMemory()
 
         self.isSilent = config.START_SILENT
         self.matchList = []
@@ -243,6 +244,13 @@ class tBot(object):
             messageLower = message.lower()
 
             helper.log(username + ': ' + message)
+
+            for intervalKey, intervalTime in config.INTERVALS.items():
+                if message == intervalKey:
+                    self.timerMemory.setTimeFor(intervalKey, intervalTime)
+                elif not self.timerMemory.isInMemory(intervalKey):
+                    self.chat(intervalKey)
+                    self.timerMemory.add(intervalKey, intervalTime)
 
             if username == 'tmi' or username == config.NICK:
                 pass

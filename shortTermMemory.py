@@ -12,6 +12,14 @@ class shortTermMemory(object):
 
         self.memoryList.append(memory(data, timeToLive))
 
+    def setTimeFor(self, data, timeToLive):
+        found = 0
+        for memory in reversed(self.memoryList):
+            if memory.data == data:
+                memory.setNewTime(timeToLive)
+                found += 1
+        return found
+
     def isInMemory(self, data):
         if self.autoClean:
             self.clean()
@@ -41,6 +49,10 @@ class memory(object):
     def __init__(self, data, timeToLive):
         self.time = time.time()
         self.data = data
+        self.timeToLive = timeToLive
+
+    def setNewTime(self, timeToLive):
+        self.time = time.time()
         self.timeToLive = timeToLive
 
     def removeMe(self):
