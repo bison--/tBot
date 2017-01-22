@@ -53,6 +53,12 @@ class tBot(object):
         if dynamicCommandsTmp is not None:
            self.dynamicCommands = dynamicCommandsTmp
 
+        self.userGreetingsFile = 'userGreetings.json'
+        self.userGreetings = {}
+        userGreetingsTmp = helper.loadJson(self.userGreetingsFile)
+        if userGreetingsTmp is not None:
+           self.userGreetings = userGreetingsTmp
+
         self.usersInChatLastRefresh = 0
         self.usersInChat = set()
 
@@ -129,6 +135,25 @@ class tBot(object):
                 import iBet
                 self.wette = iBet.iBet(self)
             self.wette.commands(username, message, messageLower)
+        elif messageLower.startswith('!addGreeting'):
+            if self.checkMaster(username):
+                cmdParts = message.split(' ')
+                if len(cmdParts) < 4:
+                    self.chat(chatName + ' this is wrong -.- syntax: username triggerOn(* for default) greetingTEXT')
+                else:
+                    _userName = cmdParts[1]
+                    _triggerOn = cmdParts[2]
+                    if (_triggerOn[0] == '!'):
+                        self.chat(chatName + ' this is wrong! commands with "!" NOT allowed!!1!')
+                        return
+
+                    _text = ' '.join(cmdParts[3:])
+                    if _userName in self.userGreetings:
+                        self.chat(chatName + ' i will change my quest for "' + _userName + '"')
+                    else:
+                        self.chat(chatName + ' i added "' + _userName + '" to my quest log!')
+                    self.userGreetings[_userName] = {'triggerOn':_triggerOn, 'text':_text}
+                    helper.saveJson(self.userGreetingsFile, self.userGreetings)
 
         elif messageLower.startswith('!match'):
             if messageLower == '!match':
@@ -268,6 +293,8 @@ class tBot(object):
                 self.chat("baukasten")
             elif 'hamster' in  messageLower:
                 self.chat("HAMSTER! \o/")
+            elif username in self.userGreetings and self.userGreetings[username]['triggerOn'] == message:
+                self.chat(self.userGreetings[username]['text'], 120)
             elif len(messageLower) <= 42 and not self.chatMemory.isInMemory('_GREETING_'):
                 if 'nabend' in messageLower \
                         or 'moin' in messageLower \
@@ -275,11 +302,14 @@ class tBot(object):
                         or 'hallo' in messageLower \
                         or 'guten abend'in messageLower \
                         or 'servus'in messageLower:
-                    self.chatMemory.add('_GREETING_', 120)
-                    import random
-                    greetText = random.choice(['ohai', 'hallo @' + username, 'servus', 'noot noot @' + username])
-                    greetText +=  random.choice(['', ' o/'])
-                    self.chat(greetText, 120)
+                    if username in self.userGreetings and self.userGreetings[username]['triggerOn'] == '*':
+                        self.chat(self.userGreetings[username]['text'], 120)
+                    else:
+                        self.chatMemory.add('_GREETING_', 120)
+                        import random
+                        greetText = random.choice(['ohai', 'hallo @' + username, 'servus', 'noot noot @' + username])
+                        greetText +=  random.choice(['', ' o/'])
+                        self.chat(greetText, 120)
         return True
 
     def getUsers(self, forceLoad=False):
