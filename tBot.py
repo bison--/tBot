@@ -105,8 +105,8 @@ class tBot(object):
             self.chat("@timkalation: GO GO TIM TIM GO GO!")
         elif '!burn' == messageLower:
             self.chat('🔥'*10)
-        elif '!!myrank' == messageLower:
-            self.chat('!myrank')
+        elif '!!myrank' == messageLower or '!!wutcoins' == messageLower:
+            self.chat('!wutcoins')
         elif '!silence' == messageLower:
             if self.checkMaster(username):
                 if self.isSilent:
