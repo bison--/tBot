@@ -268,14 +268,18 @@ class tBot(object):
                 self.chat("baukasten")
             elif 'hamster' in  messageLower:
                 self.chat("HAMSTER! \o/")
-            elif len(messageLower) <= 42:
+            elif len(messageLower) <= 42 and not self.chatMemory.isInMemory('_GREETING_'):
                 if 'nabend' in messageLower \
                         or 'moin' in messageLower \
                         or 'huhu' in messageLower \
                         or 'hallo' in messageLower \
                         or 'guten abend'in messageLower \
                         or 'servus'in messageLower:
-                    self.chat("ohai o/", 120)
+                    self.chatMemory.add('_GREETING_', 120)
+                    import random
+                    greetText = random.choice(['ohai', 'hallo @' + username, 'servus', 'noot noot @' + username])
+                    greetText +=  random.choice(['', ' o/'])
+                    self.chat(greetText, 120)
         return True
 
     def getUsers(self, forceLoad=False):
