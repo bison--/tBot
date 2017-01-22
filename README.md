@@ -83,6 +83,21 @@ The match-module is a simple list for things like "who plays against me first".
 * `!matchlist` shows the current match list
 * `!matchclear` be timkalation or bison, clears the current match list
 
+## greeting
+
+The bot can greet users, add OR change a greeting text with:
+```
+!addGreeting merover * everyone is a hamster!
+```
+
+1. `!addGreeting` adds OR changes a greeting
+2. Parameter: the Username (ALWAYS lowercase without @ !)
+3. Parameter: a simple command that triggers the greeting
+  * CANT have spaces
+  * MUST be one word
+  * IS case sensitive!
+4. Parameter: the greeting text
+
 ## other commands
 
 * `!silence` activate/deactivate ALL chats from the bot
