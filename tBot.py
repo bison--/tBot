@@ -302,8 +302,8 @@ class tBot(object):
                         or 'hallo' in messageLower \
                         or 'guten abend'in messageLower \
                         or 'servus'in messageLower:
-                    if username in self.userGreetings and self.userGreetings[username]['triggerOn'] == '*':
-                        if not self.chatMemory.isInMemory(self.userGreetings[username]['text']):
+                    if username in self.userGreetings:
+                        if self.userGreetings[username]['triggerOn'] == '*' and not self.chatMemory.isInMemory(self.userGreetings[username]['text']):
                             self.chat(self.userGreetings[username]['text'], 120)
                     elif not self.chatMemory.isInMemory('_GREETING_'):
                         self.chatMemory.add('_GREETING_', 120)
