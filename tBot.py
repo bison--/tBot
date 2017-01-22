@@ -275,7 +275,7 @@ class tBot(object):
                         or 'hallo' in messageLower \
                         or 'guten abend'in messageLower \
                         or 'servus'in messageLower:
-                    self.chat("ohai o/")
+                    self.chat("ohai o/", 120)
         return True
 
     def getUsers(self, forceLoad=False):
@@ -314,7 +314,7 @@ class tBot(object):
 
         return self.usersInChat
 
-    def chat(self, msg):
+    def chat(self, msg, memoryLifeTime = 30):
         """
 
         :type msg: string
@@ -328,7 +328,7 @@ class tBot(object):
             helper.log('stealth-mode: "' + msg + '"')
             return False
 
-        self.chatMemory.add(msg, 30)
+        self.chatMemory.add(msg, memoryLifeTime)
         helper.log('sending... "' + msg + '"')
         try:
             self.sock.send("PRIVMSG {} :{}\r\n".format(CHAN, msg).encode())

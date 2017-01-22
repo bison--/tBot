@@ -100,5 +100,5 @@ class iBet(object):
                 self.tBot.chat(chatName + ' du hast bereits "' + self.userBets[username] + '" gewettet')
             else:
                 self.userBets[username] = option
-                self.tBot.chat(chatName + ' wette auf "' + option +  '" angenommen!')
+                self.tBot.chat(chatName + ' wette auf "' + option + '" angenommen!')
 
