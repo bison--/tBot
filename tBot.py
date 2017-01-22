@@ -135,7 +135,7 @@ class tBot(object):
                 import iBet
                 self.wette = iBet.iBet(self)
             self.wette.commands(username, message, messageLower)
-        elif messageLower.startswith('!addGreeting'):
+        elif message.startswith('!addGreeting'):
             if self.checkMaster(username):
                 cmdParts = message.split(' ')
                 if len(cmdParts) < 4:
@@ -149,9 +149,9 @@ class tBot(object):
 
                     _text = ' '.join(cmdParts[3:])
                     if _userName in self.userGreetings:
-                        self.chat(chatName + ' i will change my quest for "' + _userName + '"')
+                        self.chat(chatName + ' i will change my greeting for "' + _userName + '"')
                     else:
-                        self.chat(chatName + ' i added "' + _userName + '" to my quest log!')
+                        self.chat(chatName + ' i added "' + _userName + '" to my greeting log!')
                     self.userGreetings[_userName] = {'triggerOn':_triggerOn, 'text':_text}
                     helper.saveJson(self.userGreetingsFile, self.userGreetings)
 
