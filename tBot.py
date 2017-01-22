@@ -295,7 +295,7 @@ class tBot(object):
                 self.chat("HAMSTER! \o/")
             elif username in self.userGreetings and self.userGreetings[username]['triggerOn'] == message:
                 self.chat(self.userGreetings[username]['text'], 120)
-            elif len(messageLower) <= 42 and not self.chatMemory.isInMemory('_GREETING_'):
+            elif len(messageLower) <= 42:
                 if 'nabend' in messageLower \
                         or 'moin' in messageLower \
                         or 'huhu' in messageLower \
@@ -303,8 +303,9 @@ class tBot(object):
                         or 'guten abend'in messageLower \
                         or 'servus'in messageLower:
                     if username in self.userGreetings and self.userGreetings[username]['triggerOn'] == '*':
-                        self.chat(self.userGreetings[username]['text'], 120)
-                    else:
+                        if not self.chatMemory.isInMemory(self.userGreetings[username]['text']):
+                            self.chat(self.userGreetings[username]['text'], 120)
+                    elif not self.chatMemory.isInMemory('_GREETING_'):
                         self.chatMemory.add('_GREETING_', 120)
                         import random
                         greetText = random.choice(['ohai', 'hallo @' + username, 'servus', 'noot noot @' + username])
