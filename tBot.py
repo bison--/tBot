@@ -216,15 +216,18 @@ class tBot(object):
             self.chat('hallo alle o/')
         except Exception as ex:
             self.connected = False
-            print(ex)
+            print('main_loop 1:', ex)
 
         while self.connected:
             try:
                 self.getUsers()
-                self.executor()
+                if not self.executor():
+                    helper.log('main_loop 2: EXECUTOR FAILED!')
+                    break
+
             except Exception as ex:
                 self.connected = False
-                print(ex)
+                print('main_loop 3:', ex)
 
             sleep(0.1)
 
@@ -262,7 +265,7 @@ class tBot(object):
                 username = re.search(r"\w+", response).group(0)
                 message = CHAT_MSG.sub("", response)
             except Exception as ex:
-                helper.log(str(ex) + ' response:' + response)
+                helper.log('executor: ' + str(ex) + ' response:' + response)
                 return False
 
             message = message.strip()
