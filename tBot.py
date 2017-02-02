@@ -62,6 +62,11 @@ class tBot(object):
         self.usersInChatLastRefresh = 0
         self.usersInChat = set()
 
+        self.EXECUTOR_STATE_DEAD = 0
+        self.EXECUTOR_STATE_OK = 1
+        self.EXECUTOR_STATE_EMPTY = 2
+
+
     def checkMaster(self, username, message=''):
         if username in self.myMasters:
             return True
@@ -221,7 +226,7 @@ class tBot(object):
         while self.connected:
             try:
                 self.getUsers()
-                if not self.executor():
+                if self.executor() == self.EXECUTOR_STATE_DEAD:
                     helper.log('main_loop 2: EXECUTOR FAILED!')
                     break
 
@@ -249,10 +254,10 @@ class tBot(object):
         if self.timeoutCounter >= 400:
             helper.log('timeoutCounter ERROR: ' + str(self.timeoutCounter))
             self.connected = False
-            return False
+            return self.EXECUTOR_STATE_DEAD
 
         if response is None:
-            return False
+            return  self.EXECUTOR_STATE_EMPTY
 
         if response == "PING :tmi.twitch.tv\r\n":
             self.sock.send("PONG :tmi.twitch.tv\r\n".encode())
@@ -266,7 +271,7 @@ class tBot(object):
                 message = CHAT_MSG.sub("", response)
             except Exception as ex:
                 helper.log('executor: ' + str(ex) + ' response:' + response)
-                return False
+                return  self.EXECUTOR_STATE_DEAD
 
             message = message.strip()
             messageLower = message.lower()
@@ -314,7 +319,7 @@ class tBot(object):
                         greetText = random.choice(['ohai', 'hallo @' + username, 'servus', 'noot noot @' + username])
                         greetText +=  random.choice(['', ' o/'])
                         self.chat(greetText, 120)
-        return True
+        return self.EXECUTOR_STATE_OK
 
     def getUsers(self, forceLoad=False):
         #https://tmi.twitch.tv/group/user/timkalation/chatters
