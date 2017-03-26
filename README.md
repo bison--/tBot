@@ -99,6 +99,16 @@ The bot can greet users, add OR change a greeting text with:
   * IS case sensitive!
 4. Parameter: the greeting text
 
+## submaster
+
+add/remove sub masters  
+WARNING: case sensitive!
+
+* `!!submaster list` shows all sub masters
+* `!!submaster add someTwitchUser` adds someTwitchUser as new sub master
+* `!!submaster remove someTwitchUser` removes someTwitchUser as sub masters
+
+
 ## other commands
 
 * `!silence` activate/deactivate ALL chats from the bot

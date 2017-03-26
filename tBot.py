@@ -36,9 +36,13 @@ class tBot(object):
         self.die = False
 
         self.myMasters = {'timkalation', 'bison_42'}
+
         self.mySubMasters = {'tomblex', 'Racesore', 'Plantprogrammer'}
-        for master in self.myMasters:
-            self.mySubMasters.add(master)
+        self.mySubMastersFile = 'mySubMasters.json'
+        mySubMastersTmp = helper.loadJson(self.mySubMastersFile)
+        if mySubMastersTmp is not None:
+           self.mySubMasters = mySubMastersTmp
+
         self.revivedCounter = 0
 
         self.dynamicCommandsFile = 'dynamicCommands.json'
@@ -186,6 +190,28 @@ class tBot(object):
                     finalStr += '{}. {}, '.format(index, player)
                     index += 1
                 self.chat('Die Matchreihenfolge lautet wie folgt: ' + finalStr)
+
+        elif messageLower.startswith('!!submaster'):
+            if self.checkMaster(username):
+                cmdParts = message.split(' ')
+                if len(cmdParts) < 2:
+                    self.chat(chatName + ' this is wrong -.-')
+                cmdKey = cmdParts[2]
+                if len(cmdParts) == 2 and cmdKey == 'list':
+                    listOfAllSubMasters = ', '.join(self.mySubMasters)
+                    self.chat(listOfAllSubMasters)
+                elif len(cmdParts) == 3:
+                    newSubMasterName = cmdParts[2]
+                    if cmdKey == 'add':
+                        self.mySubMasters.add(newSubMasterName)
+                        helper.saveJson(self.mySubMasters, self.mySubMastersFile)
+                        self.chat('added "' + newSubMasterName + '" as my new sub master!')
+                    elif cmdKey == 'del':
+                        self.mySubMasters.add(newSubMasterName)
+                        helper.saveJson(self.mySubMasters, self.mySubMastersFile)
+                        self.chat('removed "' + newSubMasterName + '" as sub master!')
+                    else:
+                        self.chat('WRONG COMMAND  "' + cmdKey + '"')
 
         elif message.startswith('!!add'):
             if self.checkMaster(username):
