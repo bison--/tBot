@@ -37,7 +37,7 @@ class tBot(object):
 
         self.myMasters = {'timkalation', 'bison_42'}
 
-        self.mySubMasters = {'tomblex', 'Racesore', 'Plantprogrammer'}
+        self.mySubMasters = ['tomblex', 'Racesore', 'Plantprogrammer']
         self.mySubMastersFile = 'mySubMasters.json'
         mySubMastersTmp = helper.loadJson(self.mySubMastersFile)
         if mySubMastersTmp is not None:
