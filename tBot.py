@@ -196,7 +196,7 @@ class tBot(object):
                 cmdParts = message.split(' ')
                 if len(cmdParts) < 2:
                     self.chat(chatName + ' this is wrong -.-')
-                cmdKey = cmdParts[2]
+                cmdKey = cmdParts[1]
                 if len(cmdParts) == 2 and cmdKey == 'list':
                     listOfAllSubMasters = ', '.join(self.mySubMasters)
                     self.chat(listOfAllSubMasters)
