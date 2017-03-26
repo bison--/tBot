@@ -102,3 +102,4 @@ The bot can greet users, add OR change a greeting text with:
 ## other commands
 
 * `!silence` activate/deactivate ALL chats from the bot
+* `!takebluepill`, `!bluepill` kills the short time memory / resets all timers for chat and interval messages

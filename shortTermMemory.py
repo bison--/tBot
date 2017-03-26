@@ -22,20 +22,17 @@ class shortTermMemory(object):
 
     def isInMemory(self, data):
         if self.autoClean:
-            self.clean(0)
+            self.clean()
 
         for memory in self.memoryList:
             if memory.data == data:
                 return True
         return False
 
-    def clean(self, maxAge=120):
+    def clean(self):
         currentTime = time.time()
         for memory in reversed(self.memoryList):
-            if maxAge > 0 and memory.time + maxAge < currentTime:
-                #print('OLD AGE:' + memory.data)
-                self.memoryList.remove(memory)
-            elif memory.removeMe():
+            if memory.removeMe():
                 self.memoryList.remove(memory)
             else:
                 #print('IN TIME:' + memory.data)

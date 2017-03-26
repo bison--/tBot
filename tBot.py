@@ -135,6 +135,10 @@ class tBot(object):
         elif '!alive' == messageLower:
             secondsAlive = time.time() - self.startTime
             self.chat('ich bin seit {} sekunden / {} am leben und wurde {}x wiederbelebt'.format(secondsAlive, helper.getReadableTime(secondsAlive), self.revivedCounter))
+        elif '!takebluepill' == messageLower or '!bluepill' == messageLower:
+            if self.checkSubMaster(username):
+                self.chatMemory.clean()
+                self.timerMemory.clean()
         elif messageLower.startswith('!wetten'):
             if not hasattr(self, 'wette'):
                 import iBet
