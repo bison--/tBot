@@ -77,7 +77,10 @@ class tBot(object):
                 self.chat(message)
             return False
 
-    def checkSubMaster(self, username, message=''):
+    def checkSubMaster(self, username, message='', checkMastersToo=True):
+        if checkMastersToo and username in self.myMasters:
+            return True
+
         if username in self.mySubMasters:
             return True
         else:
@@ -137,6 +140,7 @@ class tBot(object):
             self.chat('ich bin seit {} sekunden / {} am leben und wurde {}x wiederbelebt'.format(secondsAlive, helper.getReadableTime(secondsAlive), self.revivedCounter))
         elif '!takebluepill' == messageLower or '!bluepill' == messageLower:
             if self.checkSubMaster(username):
+                self.chat('i will forget everything...')
                 self.chatMemory.clean()
                 self.timerMemory.clean()
         elif messageLower.startswith('!wetten'):
