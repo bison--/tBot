@@ -204,11 +204,11 @@ class tBot(object):
                     newSubMasterName = cmdParts[2]
                     if cmdKey == 'add':
                         self.mySubMasters.add(newSubMasterName)
-                        helper.saveJson(self.mySubMasters, self.mySubMastersFile)
+                        helper.saveJson(self.mySubMastersFile, self.mySubMasters)
                         self.chat('added "' + newSubMasterName + '" as my new sub master!')
                     elif cmdKey == 'del':
                         self.mySubMasters.add(newSubMasterName)
-                        helper.saveJson(self.mySubMasters, self.mySubMastersFile)
+                        helper.saveJson(self.mySubMastersFile, self.mySubMasters)
                         self.chat('removed "' + newSubMasterName + '" as sub master!')
                     else:
                         self.chat('WRONG COMMAND  "' + cmdKey + '"')
