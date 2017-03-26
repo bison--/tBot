@@ -141,8 +141,8 @@ class tBot(object):
         elif '!takebluepill' == messageLower or '!bluepill' == messageLower:
             if self.checkSubMaster(username):
                 self.chat('i will forget everything...')
-                self.chatMemory.clean()
-                self.timerMemory.clean()
+                self.chatMemory.clean(True)
+                self.timerMemory.clean(True)
         elif messageLower.startswith('!wetten'):
             if not hasattr(self, 'wette'):
                 import iBet

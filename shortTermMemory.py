@@ -29,14 +29,17 @@ class shortTermMemory(object):
                 return True
         return False
 
-    def clean(self):
-        currentTime = time.time()
-        for memory in reversed(self.memoryList):
-            if memory.removeMe():
-                self.memoryList.remove(memory)
-            else:
-                #print('IN TIME:' + memory.data)
-                pass
+    def clean(self, enforce=False):
+        if enforce:
+            self.memoryList.clear()
+        else:
+            currentTime = time.time()
+            for memory in reversed(self.memoryList):
+                if memory.removeMe():
+                    self.memoryList.remove(memory)
+                else:
+                    #print('IN TIME:' + memory.data)
+                    pass
 
     def clear(self):
         self.memoryList = []
