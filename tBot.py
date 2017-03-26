@@ -37,7 +37,7 @@ class tBot(object):
 
         self.myMasters = {'timkalation', 'bison_42'}
 
-        self.mySubMasters = ['tomblex', 'Racesore', 'Plantprogrammer']
+        self.mySubMasters = {'tomblex':'tomblex', 'Racesore':'Racesore', 'Plantprogrammer':'Plantprogrammer'}
         self.mySubMastersFile = 'mySubMasters.json'
         mySubMastersTmp = helper.loadJson(self.mySubMastersFile)
         if mySubMastersTmp is not None:
@@ -203,11 +203,11 @@ class tBot(object):
                 elif len(cmdParts) == 3:
                     newSubMasterName = cmdParts[2]
                     if cmdKey == 'add':
-                        self.mySubMasters.add(newSubMasterName)
+                        self.mySubMasters[newSubMasterName] = newSubMasterName
                         helper.saveJson(self.mySubMastersFile, self.mySubMasters)
                         self.chat('added "' + newSubMasterName + '" as my new sub master!')
                     elif cmdKey == 'del':
-                        self.mySubMasters.add(newSubMasterName)
+                        self.mySubMasters[newSubMasterName] = newSubMasterName
                         helper.saveJson(self.mySubMastersFile, self.mySubMasters)
                         self.chat('removed "' + newSubMasterName + '" as sub master!')
                     else:
