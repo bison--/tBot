@@ -380,7 +380,8 @@ class tBot(object):
                     sleep(2.2)
 
             if username == 'tmi' or username == config.NICK:
-                helper.log(response)
+                pass
+                #helper.log(response)
             elif message[0] == '!':
                 self.commands(username, message, messageLower)
             elif 'bison' in messageLower and ('hi ' in messageLower or 'hallo ' in messageLower or 'nabend ' in messageLower):
@@ -413,7 +414,8 @@ class tBot(object):
                         greetText +=  random.choice(['', ' o/'])
                         self.chat(greetText, 120)
             else:
-                helper.log('UNKNOWN:' + response)
+                pass
+                #helper.log('UNKNOWN:' + response)
         return self.EXECUTOR_STATE_OK
 
     def getUsers(self, forceLoad=False):
