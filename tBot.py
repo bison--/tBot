@@ -158,9 +158,10 @@ class tBot(object):
                 self.giveAways[username] = 0
                 helper.saveJson(self.giveAwayFile, self.giveAways)
 
+            self.whisper(username, answerMessage)
             self.chat(answerMessage, 1)
 
-        elif '!wantsome' == messageLower:
+        elif '!wantsome' == messageLower or '!whowantsome' == messageLower:
             userAllowedList = []
             for wantName, wantHas in self.giveAways.items():
                 if wantHas == 0:

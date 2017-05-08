@@ -49,6 +49,16 @@ to remove a command follow these steps:
 * ...
 * profit!
 
+## give aways
+
+Put your give away codes in `givAways.txt`.
+
+* `!want` A user who wants a key have to write `!want` to get in the requester list.
+** The user gets also a DM to test if anonymous DMs are open.
+* `!wantsome` or `!whowantsome` shows a list of all users who want a key and don't have one already.
+* `!getsome` picks a random user from the list and DMs a key from the `givAways.txt`.
+** The used key gets a `#` on the beginning of its line.
+
 ## bet module
 
 in german (sorry ^^)
