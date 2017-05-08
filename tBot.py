@@ -35,7 +35,7 @@ class tBot(object):
         self.connected = False
         self.die = False
 
-        self.myMasters = {'timkalation', 'bison_42'}
+        self.myMasters = {'timkalation', 'bison_42', 'raymonddoerr'}
 
         self.mySubMasters = {'tomblex':'tomblex', 'Racesore':'Racesore', 'Plantprogrammer':'Plantprogrammer'}
         self.mySubMastersFile = 'mySubMasters.json'
@@ -62,6 +62,12 @@ class tBot(object):
         userGreetingsTmp = helper.loadJson(self.userGreetingsFile)
         if userGreetingsTmp is not None:
            self.userGreetings = userGreetingsTmp
+
+        self.giveAwayFile = 'giveAway.json'
+        self.giveAways = {}
+        giveAwaysTmp = helper.loadJson(self.giveAwayFile)
+        if giveAwaysTmp is not None:
+           self.giveAways = giveAwaysTmp
 
         self.usersInChatLastRefresh = 0
         self.usersInChat = set()
@@ -139,6 +145,59 @@ class tBot(object):
                 self.chat('live long and prosper 🖖')
                 self.die = True
                 self.connected = False
+
+        elif '!want' == messageLower:
+            answerMessage = ''
+            if username in self.giveAways:
+                if self.giveAways[username] == 1:
+                    answerMessage = 'you already got a key from me' + chatName
+                else:
+                    answerMessage = 'you are already on my wish list ' + chatName
+            else:
+                answerMessage = 'added you to my wish list ' + chatName
+                self.giveAways[username] = 0
+                helper.saveJson(self.giveAwayFile, self.giveAways)
+
+            self.chat(answerMessage, 1)
+
+        elif '!wantsome' == messageLower:
+            userAllowedList = []
+            for wantName, wantHas in self.giveAways.items():
+                if wantHas == 0:
+                    userAllowedList.append(wantName)
+
+            if len(userAllowedList) == 0:
+                self.chat('no one wants a key at this moment :*(', 10)
+            else:
+                self.chat('users who !want some: ' + ', '.join(userAllowedList), 10)
+
+        elif '!getsome' == messageLower:
+            if username == config.NICK or self.checkMaster(username):
+                import random
+
+                userAllowedList = []
+                for wantName, wantHas in self.giveAways.items():
+                    if wantHas == 0:
+                        userAllowedList.append(wantName)
+
+                if len(userAllowedList) == 0:
+                    self.chat('there is no one left who !want a key :*(')
+                else:
+                    _userGetOne = random.choice(userAllowedList)
+
+                    key = helper.popGiveAway()
+                    if key == '':
+                        self.chat('there is no KEY left to give away :*(')
+                    else:
+                        getMsg = 'here is your key ' + _userGetOne + ' "' + key + '" have fun o/'
+                        helper.log('GIVEAWAY TO: "'+ _userGetOne + '" KEY: "'+ key +'"')
+                        #self.chat(getMsg)
+                        if self.whisper(_userGetOne, getMsg):
+                            #self.whisper('bison_42', getMsg)
+                            self.whisper('raymonddoerr', 'COPY:' + getMsg)
+                            self.giveAways[_userGetOne] = 1
+                            helper.saveJson(self.giveAwayFile, self.giveAways)
+
         elif '!alive' == messageLower:
             secondsAlive = time.time() - self.startTime
             self.chat('ich bin seit {} sekunden / {} am leben und wurde {}x wiederbelebt'.format(secondsAlive, helper.getReadableTime(secondsAlive), self.revivedCounter))
@@ -252,7 +311,7 @@ class tBot(object):
             self.sock.send("NICK {}\r\n".format(NICK).encode("utf-8"))
             self.sock.send("JOIN {}\r\n".format(CHAN).encode("utf-8"))
             self.connected = True
-            self.chat('hallo alle o/')
+            self.chat('hi all o/')
         except Exception as ex:
             self.connected = False
             print('main_loop 1:', ex)
@@ -321,7 +380,7 @@ class tBot(object):
                     sleep(2.2)
 
             if username == 'tmi' or username == config.NICK:
-                pass
+                helper.log(response)
             elif message[0] == '!':
                 self.commands(username, message, messageLower)
             elif 'bison' in messageLower and ('hi ' in messageLower or 'hallo ' in messageLower or 'nabend ' in messageLower):
@@ -353,6 +412,8 @@ class tBot(object):
                         greetText = random.choice(['ohai', 'hallo @' + username, 'servus', 'noot noot @' + username])
                         greetText +=  random.choice(['', ' o/'])
                         self.chat(greetText, 120)
+            else:
+                helper.log('UNKNOWN:' + response)
         return self.EXECUTOR_STATE_OK
 
     def getUsers(self, forceLoad=False):
@@ -390,6 +451,16 @@ class tBot(object):
                 helper.log('getUsers ERROR: ' + str(ex))
 
         return self.usersInChat
+
+    def whisper(self, userName, msg):
+        helper.log('whispering to "' + userName + '"... "' + msg + '"')
+        try:
+            self.sock.send("PRIVMSG #jtv :/w {} {}\r\n".format(userName, msg).encode())
+        except Exception as ex:
+            helper.log('CHAT SEND WHISPER ERROR: ' + str(ex))
+            return False
+
+        return True
 
     def chat(self, msg, memoryLifeTime = 30):
         """

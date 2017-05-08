@@ -59,3 +59,21 @@ def log(msg):
     :type msg: string
     """
     print(time.strftime("%Y-%m-%d %H:%M:%S: ") + msg)
+
+def popGiveAway():
+    allLines = open('giveAways.txt', 'r').readlines()
+    newLines = ''
+    returnLine = ''
+    for line in allLines:
+        line = line.strip()
+        if returnLine == '' and line != '' and line[0] != '#':
+            returnLine = line
+            newLines += '#' + line + "\n"
+        elif line != '' :
+            newLines += line + "\n"
+
+    writeHandle = open('giveAways.txt', 'w')
+    writeHandle.write(newLines)
+    writeHandle.close()
+    #print(allLines)
+    return returnLine
