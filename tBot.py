@@ -198,6 +198,9 @@ class tBot(object):
                             self.whisper('raymonddoerr', 'COPY:' + getMsg)
                             self.giveAways[_userGetOne] = 1
                             helper.saveJson(self.giveAwayFile, self.giveAways)
+                            self.chat('and the winner is: @' + _userGetOne)
+                        else:
+                            self.chat('something went wrong!')
 
         elif '!alive' == messageLower:
             secondsAlive = time.time() - self.startTime
