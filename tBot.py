@@ -161,17 +161,6 @@ class tBot(object):
             self.whisper(username, answerMessage)
             self.chat(answerMessage, 1)
 
-        elif '!wantyougone' == messageLower:
-            allGotOne = {}
-            oldUserCount = len(self.giveAways)
-            for wantName, wantHas in self.giveAways.items():
-                if wantHas == 1:
-                    allGotOne[wantName] = 1
-
-            self.giveAways = allGotOne
-            self.chat('i removed ' + str(oldUserCount - len(self.giveAways)) + " users from the !want list (i'm so sorry)")
-            helper.saveJson(self.giveAwayFile, self.giveAways)
-
         elif '!wantsome' == messageLower or '!whowantsome' == messageLower:
             answerMessage = ''
             userAllowedList = []
@@ -189,6 +178,18 @@ class tBot(object):
                 answerMessage += '...'
 
             self.chat(answerMessage)
+
+        elif '!wantyougone' == messageLower:
+            if username == config.NICK or self.checkMaster(username):
+                allGotOne = {}
+                oldUserCount = len(self.giveAways)
+                for wantName, wantHas in self.giveAways.items():
+                    if wantHas == 1:
+                        allGotOne[wantName] = 1
+
+                self.giveAways = allGotOne
+                self.chat('i removed ' + str(oldUserCount - len(self.giveAways)) + " users from the !want list (i'm so sorry)")
+                helper.saveJson(self.giveAwayFile, self.giveAways)
 
         elif '!getsome' == messageLower:
             if username == config.NICK or self.checkMaster(username):
