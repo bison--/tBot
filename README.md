@@ -58,6 +58,7 @@ Put your give away codes in `givAways.txt`.
 * `!wantsome` or `!whowantsome` shows a list of all users who want a key and don't have one already.
 * `!getsome` picks a random user from the list and DMs a key from the `givAways.txt`.
   * The used key gets a `#` on the beginning of its line.
+* `!wantyougone` removes all unlycky users from the `!want` list.
 
 ## bet module
 
