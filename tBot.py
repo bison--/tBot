@@ -162,15 +162,22 @@ class tBot(object):
             self.chat(answerMessage, 1)
 
         elif '!wantsome' == messageLower or '!whowantsome' == messageLower:
+            answerMessage = ''
             userAllowedList = []
             for wantName, wantHas in self.giveAways.items():
                 if wantHas == 0:
                     userAllowedList.append(wantName)
 
             if len(userAllowedList) == 0:
-                self.chat('no one wants a key at this moment :*(', 10)
+                answerMessage = 'no one wants a key at this moment :*('
             else:
-                self.chat('users who !want some: ' + ', '.join(userAllowedList), 10)
+                answerMessage = str(len(userAllowedList)) + ' users !want some: ' + ','.join(userAllowedList)
+
+            if len(answerMessage) > 50:
+                answerMessage = answerMessage[0:47]
+                answerMessage += '...'
+
+            self.chat(answerMessage)
 
         elif '!getsome' == messageLower:
             if username == config.NICK or self.checkMaster(username):
