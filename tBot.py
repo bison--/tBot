@@ -173,8 +173,8 @@ class tBot(object):
             else:
                 answerMessage = str(len(userAllowedList)) + ' users !want some: ' + ','.join(userAllowedList)
 
-            if len(answerMessage) > 50:
-                answerMessage = answerMessage[0:47]
+            if len(answerMessage) > 490:
+                answerMessage = answerMessage[0:490]
                 answerMessage += '...'
 
             self.chat(answerMessage)
