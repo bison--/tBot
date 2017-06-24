@@ -303,12 +303,14 @@ class tBot(object):
                 else:
                     cmdKey = cmdParts[1]
                     cmdText = ' '.join(cmdParts[2:])
-                    if cmdKey in self.dynamicCommands:
-                        self.chat(chatName + ' i will change my quest for "' + cmdKey + '"')
+                    if cmdText.startswith("\\"):
                     else:
-                        self.chat(chatName + ' i added "' + cmdKey + '" to my quest log!')
-                    self.dynamicCommands[cmdKey] = cmdText
-                    helper.saveJson(self.dynamicCommandsFile, self.dynamicCommands)
+                        if cmdKey in self.dynamicCommands:
+                            self.chat(chatName + ' i will change my quest for "' + cmdKey + '"')
+                        else:
+                            self.chat(chatName + ' i added "' + cmdKey + '" to my quest log!')
+                        self.dynamicCommands[cmdKey] = cmdText
+                        helper.saveJson(self.dynamicCommandsFile, self.dynamicCommands)
 
         elif message.startswith('!!del'):
             if self.checkMaster(username):
@@ -414,6 +416,8 @@ class tBot(object):
                      self.chat("@" + username + ' und die erde ne scheibe :P')
                 else:
                     self.chat("@" + username + ' Wir sind der Tempel der Momentum Verleugner. Man verliert wegen sich, nicht weil das Spiel entscheidet, dass man nicht gewinnen darf. Nächste Messe: morgen um 10:00. Kappa')
+                    #'Nun bemerket doch, in welch heiligen Hallen wir uns befinden und huldigt denen die schweigend 40:0 darbieten und den Momentum Teufel Lügen strafen!'
+                    #
             elif 'chemie ' in messageLower or ' chemie' in messageLower:
                 self.chat("baukasten")
             elif 'hamster' in  messageLower:
