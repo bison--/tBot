@@ -304,6 +304,7 @@ class tBot(object):
                     cmdKey = cmdParts[1]
                     cmdText = ' '.join(cmdParts[2:])
                     if cmdText.startswith("\\"):
+                        self.chat('sorry ' + chatName + ' but I can NOT do that!')
                     else:
                         if cmdKey in self.dynamicCommands:
                             self.chat(chatName + ' i will change my quest for "' + cmdKey + '"')
