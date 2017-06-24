@@ -76,6 +76,7 @@ class tBot(object):
         self.EXECUTOR_STATE_OK = 1
         self.EXECUTOR_STATE_EMPTY = 2
 
+        self.momentumIndex = 0
 
     def checkMaster(self, username, message=''):
         if username in self.myMasters:
@@ -416,9 +417,28 @@ class tBot(object):
                 if username == 'varu7777777':
                      self.chat("@" + username + ' und die erde ne scheibe :P')
                 else:
-                    self.chat("@" + username + ' Wir sind der Tempel der Momentum Verleugner. Man verliert wegen sich, nicht weil das Spiel entscheidet, dass man nicht gewinnen darf. Nächste Messe: morgen um 10:00. Kappa')
-                    #'Nun bemerket doch, in welch heiligen Hallen wir uns befinden und huldigt denen die schweigend 40:0 darbieten und den Momentum Teufel Lügen strafen!'
-                    #
+                    momentumList = [
+                        ' Wir sind der Tempel der Momentum Verleugner. Man verliert wegen sich, nicht weil das Spiel entscheidet, dass man nicht gewinnen darf. Nächste Messe: morgen um 10:00. Kappa',
+                        ' Nun bemerket doch, in welch heiligen Hallen wir uns befinden und huldigt denen die schweigend 40:0 darbieten und den Momentum Teufel Lügen strafen!',
+                        'Bekehret Euer Selbstbildnis und den Glauben an Eure Stärken. Wendet Euch ab von höheren Mächten die Euch verlieren sehen wollen und wendet Euch Training und Leidenschaft zu. Lasset dies die Nahrung für Euren wachsenden FIFA Erfolg sein. Realtalk: Momentum-ich darf nicht gewinnen-MiMiMi nervt und findet hier keine Zustimmung. Danke. :)',
+                        '/timeout ' + username +' 66'
+                                    ]
+                    momentumText = ''
+
+                    if not self.chatMemory.isInMemory('MOMENTUM_TALK_LOCK') and self.momentumIndex >= len(momentumList)-1:
+                        self.momentumIndex = 0
+
+                    if self.momentumIndex <= len(momentumList)-1:
+                        momentumText = momentumList[self.momentumIndex]
+                        self.momentumIndex += 1
+                        if momentumText.startswith('/'):
+                            self.chat(momentumText)
+                        else:
+                            self.chat("@" + username + momentumText)
+
+                        if self.momentumIndex >= len(momentumList)-1:
+                            self.chatMemory.add('MOMENTUM_TALK_LOCK', 60*25)
+
             elif 'chemie ' in messageLower or ' chemie' in messageLower:
                 self.chat("baukasten")
             elif 'hamster' in  messageLower:

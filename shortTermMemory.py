@@ -7,6 +7,11 @@ class shortTermMemory(object):
         self.autoClean = True
 
     def add(self, data, timeToLive=0):
+        '''
+        :param data: text/data to check for (counts as a key)
+        :param timeToLive: remember this for X seconds
+        :return: None
+        '''
         if self.autoClean:
             self.clean()
 
