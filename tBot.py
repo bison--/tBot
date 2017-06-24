@@ -413,7 +413,7 @@ class tBot(object):
                 if username == 'varu7777777':
                      self.chat("@" + username + ' und die erde ne scheibe :P')
                 else:
-                    self.chat("@" + username + ' es gibt kein momentum!')
+                    self.chat("@" + username + ' Wir sind der Tempel der Momentum Verleugner. Man verliert wegen sich, nicht weil das Spiel entscheidet, dass man nicht gewinnen darf. Nächste Messe: morgen um 10:00. Kappa')
             elif 'chemie ' in messageLower or ' chemie' in messageLower:
                 self.chat("baukasten")
             elif 'hamster' in  messageLower:
