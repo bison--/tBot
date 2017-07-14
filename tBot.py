@@ -36,6 +36,10 @@ class tBot(object):
         self.die = False
 
         self.myMasters = {'timkalation', 'bison_42', 'raymonddoerr'}
+        self.myMastersFile = 'myMasters.json'
+        myMastersTmp = helper.loadJson(self.myMastersFile)
+        if myMastersTmp is not None:
+           self.myMasters = myMastersTmp
 
         self.mySubMasters = {'tomblex':'tomblex', 'Racesore':'Racesore', 'Plantprogrammer':'Plantprogrammer'}
         self.mySubMastersFile = 'mySubMasters.json'
@@ -100,6 +104,16 @@ class tBot(object):
             else:
                 self.chat(message)
             return False
+
+    def getIntegratedList(self, listName = ''):
+        if listName == 'submasters':
+            return self.mySubMasters
+        elif listName == 'masters':
+            return self.myMasters
+        elif listName == 'dynamiccommands':
+            return self.dynamicCommands
+
+        return {'UNKNOWN:':listName}
 
     def commands(self, username, message, messageLower):
         chatName = '@' + username
@@ -274,25 +288,37 @@ class tBot(object):
                     index += 1
                 self.chat('Die Matchreihenfolge lautet wie folgt: ' + finalStr)
 
-        elif messageLower.startswith('!!submaster'):
+        elif messageLower.startswith('!!submaster') or messageLower.startswith('!!master'):
             if self.checkMaster(username):
                 cmdParts = message.split(' ')
                 if len(cmdParts) < 2:
                     self.chat(chatName + ' this is wrong -.-')
                 cmdKey = cmdParts[1]
+
+                dynList = self.getIntegratedList(cmdParts[0].replace('!!', ''))
+                isSubMaster = 'sub' in cmdParts[0]
+
                 if len(cmdParts) == 2 and cmdKey == 'list':
-                    listOfAllSubMasters = ', '.join(self.mySubMasters)
-                    self.chat(listOfAllSubMasters)
+                    listOfAllXMasters = ', '.join(dynList)
+                    self.chat(listOfAllXMasters)
                 elif len(cmdParts) == 3:
-                    newSubMasterName = cmdParts[2]
+                    newXMasterName = cmdParts[2]
                     if cmdKey == 'add':
-                        self.mySubMasters[newSubMasterName] = newSubMasterName
-                        helper.saveJson(self.mySubMastersFile, self.mySubMasters)
-                        self.chat('added "' + newSubMasterName + '" as my new sub master!')
+                        if isSubMaster:
+                            self.mySubMasters[newXMasterName] = newXMasterName
+                            helper.saveJson(self.mySubMastersFile, self.mySubMasters)
+                            self.chat('added "' + newXMasterName + '" as my new sub master!')
+                        else:
+                            self.myMasters[newXMasterName] = newXMasterName
+                            helper.saveJson(self.myMastersFile, self.myMasters)
+                            self.chat('added "' + newXMasterName + '" as my new sub master!')
                     elif cmdKey == 'del':
-                        self.mySubMasters[newSubMasterName] = newSubMasterName
-                        helper.saveJson(self.mySubMastersFile, self.mySubMasters)
-                        self.chat('removed "' + newSubMasterName + '" as sub master!')
+                        if isSubMaster:
+                            self.mySubMasters[newXMasterName] = newXMasterName
+                            helper.saveJson(self.mySubMastersFile, self.mySubMasters)
+                            self.chat('removed "' + newXMasterName + '" as sub master!')
+                        else:
+                            self.chat('sorry @' + chatName + ', i can not do that!')
                     else:
                         self.chat('WRONG COMMAND  "' + cmdKey + '"')
 
