@@ -35,7 +35,7 @@ class tBot(object):
         self.connected = False
         self.die = False
 
-        self.myMasters = {'timkalation', 'bison_42', 'raymonddoerr'}
+        self.myMasters = {'timkalation':'timkalation', 'bison_42':'bison_42', 'raymonddoerr':'raymonddoerr'}
         self.myMastersFile = 'myMasters.json'
         myMastersTmp = helper.loadJson(self.myMastersFile)
         if myMastersTmp is not None:
