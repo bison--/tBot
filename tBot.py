@@ -311,7 +311,7 @@ class tBot(object):
                         else:
                             self.myMasters[newXMasterName] = newXMasterName
                             helper.saveJson(self.myMastersFile, self.myMasters)
-                            self.chat('added "' + newXMasterName + '" as my new sub master!')
+                            self.chat('added "' + newXMasterName + '" as my new master!')
                     elif cmdKey == 'del':
                         if isSubMaster:
                             self.mySubMasters[newXMasterName] = newXMasterName
