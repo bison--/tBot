@@ -111,6 +111,13 @@ class tBot(object):
                 self.chat(message)
             return False
 
+    def checkRude(self, username):
+        if username in self.rudes:
+            self.rudes[username] += 1
+            helper.saveJson(self.rudesFile, self.rudes)
+            return True
+        return False
+
     def getIntegratedList(self, listName = ''):
         if listName == 'submasters':
             return self.mySubMasters
@@ -124,10 +131,8 @@ class tBot(object):
     def commands(self, username, message, messageLower):
         chatName = '@' + username
 
-        if username in self.rudes:
-            self.rudes[username] += 1
-            helper.saveJson(self.rudesFile, self.rudes)
-
+        if self.checkRude(username):
+            pass
         elif "!test" == messageLower:
             self.chat("HAMSTER!")
         #elif '!lupfer' == messageLower:
@@ -171,19 +176,11 @@ class tBot(object):
                 self.die = True
                 self.connected = False
 
-        elif messageLower.startswith('!rude add'):
+        elif message.startswith('!rude add '):
             if self.checkMaster(username):
-                rudeUsername = messageLower.replace('!rude add ', '')
+                rudeUsername = message.replace('!rude add ', '')
                 self.chat('adding @' + rudeUsername + ' to my rude user list.')
                 self.rudes[rudeUsername] = 1
-                helper.saveJson(self.rudesFile, self.rudes)
-
-        elif NICK in message:
-            # direct talk
-            rudeWords = ['klappe', 'schnauze', 'fresse']
-            if any(rudeWord in messageLower for rudeWord in rudeWords):
-                self.chat('THAT was rude ' + chatName)
-                self.rudes[username] = 1
                 helper.saveJson(self.rudesFile, self.rudes)
 
         elif '!want' == messageLower:
@@ -460,6 +457,16 @@ class tBot(object):
             if username == 'tmi' or username == config.NICK:
                 pass
                 #helper.log(response)
+            elif self.checkRude(username):
+                helper.log('RUDE BLOCK: ' + username)
+
+            elif config.NICK in message:
+                # direct talk
+                rudeWords = ['klappe', 'schnauze', 'fresse']
+                if any(rudeWord in messageLower for rudeWord in rudeWords):
+                    self.chat('THAT was rude @' + username)
+                    self.rudes[username] = 1
+                    helper.saveJson(self.rudesFile, self.rudes)
             elif message[0] == '!':
                 self.commands(username, message, messageLower)
             elif 'bison' in messageLower and ('hi ' in messageLower or 'hallo ' in messageLower or 'nabend ' in messageLower):
