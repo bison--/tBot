@@ -173,7 +173,7 @@ class tBot(object):
 
         elif messageLower.startswith('!rude add'):
             if self.checkMaster(username):
-                rudeUsername = messageLower.replace('!rude add', '')
+                rudeUsername = messageLower.replace('!rude add ', '')
                 self.chat('adding @' + rudeUsername + ' to my rude user list.')
                 self.rudes[rudeUsername] = 1
                 helper.saveJson(self.rudesFile, self.rudes)
