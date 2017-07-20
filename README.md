@@ -124,3 +124,5 @@ WARNING: case sensitive!
 
 * `!silence` activate/deactivate ALL chats from the bot
 * `!takebluepill`, `!bluepill` kills the short time memory / resets all timers for chat and interval messages
+* `!rude add someTwitchUser` adds a user to the RUDE list and he will be completely ignored. Username is case sensitive AND without the @
+
