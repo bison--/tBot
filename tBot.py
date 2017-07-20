@@ -73,6 +73,12 @@ class tBot(object):
         if giveAwaysTmp is not None:
            self.giveAways = giveAwaysTmp
 
+        self.rudesFile = 'rudes.json'
+        self.rudes = {}
+        rudesTmp = helper.loadJson(self.rudesFile)
+        if rudesTmp is not None:
+           self.rudes = rudesTmp
+
         self.usersInChatLastRefresh = 0
         self.usersInChat = set()
 
@@ -118,7 +124,11 @@ class tBot(object):
     def commands(self, username, message, messageLower):
         chatName = '@' + username
 
-        if "!test" == messageLower:
+        if username in self.rudes:
+            self.rudes[username] += 1
+            helper.saveJson(self.rudesFile, self.rudes)
+
+        elif "!test" == messageLower:
             self.chat("HAMSTER!")
         #elif '!lupfer' == messageLower:
         #    self.chat('lupfe die lupf hupf ¯\_(ツ)_/¯')
@@ -160,6 +170,21 @@ class tBot(object):
                 self.chat('live long and prosper 🖖')
                 self.die = True
                 self.connected = False
+
+        elif messageLower.startswith('!rude add'):
+            if self.checkMaster(username):
+                rudeUsername = messageLower.replace('!rude add', '')
+                self.chat('adding @' + rudeUsername + ' to my rude user list.')
+                self.rudes[rudeUsername] = 1
+                helper.saveJson(self.rudesFile, self.rudes)
+
+        elif NICK in message:
+            # direct talk
+            rudeWords = ['klappe', 'schnauze', 'fresse']
+            if any(rudeWord in messageLower for rudeWord in rudeWords):
+                self.chat('THAT was rude ' + chatName)
+                self.rudes[username] = 1
+                helper.saveJson(self.rudesFile, self.rudes)
 
         elif '!want' == messageLower:
             answerMessage = ''
