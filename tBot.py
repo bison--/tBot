@@ -259,8 +259,11 @@ class tBot(object):
                             self.chat('something went wrong!')
 
         elif '!alive' == messageLower:
-            secondsAlive = time.time() - self.startTime
-            self.chat('ich bin seit {} sekunden / {} am leben und wurde {}x wiederbelebt'.format(secondsAlive, helper.getReadableTime(secondsAlive), self.revivedCounter))
+            if not self.chatMemory.isInMemory('!alive'):
+                self.chatMemory.add('!alive', 120)
+                secondsAlive = time.time() - self.startTime
+                self.chat('ich bin seit {} sekunden / {} am leben und wurde {}x wiederbelebt'.format(secondsAlive, helper.getReadableTime(secondsAlive), self.revivedCounter))
+
         elif '!takebluepill' == messageLower or '!bluepill' == messageLower:
             if self.checkSubMaster(username):
                 self.chat('i will forget everything...')
