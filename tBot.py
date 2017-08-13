@@ -4,6 +4,7 @@ import socket
 import time
 import os
 import shortTermMemory
+import randomList
 import helper
 
 
@@ -79,6 +80,14 @@ class tBot(object):
         if rudesTmp is not None:
            self.rudes = rudesTmp
 
+        self.songRequestsFile = 'songRequests.json'
+        self.songRequests = {}
+        songRequestsTmp = helper.loadJson(self.songRequestsFile)
+        if songRequestsTmp is not None:
+           self.songRequests = songRequestsTmp
+        self.songRequestsModule = randomList.randomList()
+        self.songRequestsModule.loadFromDict(self.songRequests)
+
         self.usersInChatLastRefresh = 0
         self.usersInChat = set()
 
@@ -88,15 +97,15 @@ class tBot(object):
 
         self.momentumIndex = 0
 
-    def checkMaster(self, username, message=''):
+    def checkMaster(self, username, message='', silent = False):
         if username in self.myMasters:
             return True
-        else:
+        elif not silent:
             if message == '':
                 self.chat('@' + username + ' your kung fu is not strong enough!')
             else:
                 self.chat(message)
-            return False
+        return False
 
     def checkSubMaster(self, username, message='', checkMastersToo=True):
         if checkMastersToo and username in self.myMasters:
@@ -182,6 +191,33 @@ class tBot(object):
                 self.chat('adding @' + rudeUsername + ' to my rude user list.')
                 self.rudes[rudeUsername] = 1
                 helper.saveJson(self.rudesFile, self.rudes)
+
+        elif message.startswith('!sr'):
+            if self.checkMaster(username, '', True):
+                songRequest = message.replace('!sr ', '')
+                if not songRequest in self.songRequests:
+                    self.songRequests[songRequest] = time.strftime("%Y-%m-%d %H:%M:%S: ") + username + ' ' + songRequest
+                    helper.saveJson(self.songRequestsFile, self.songRequests)
+                    self.songRequestsModule.loadFromDict(self.songRequests)
+
+        elif messageLower.startswith('!!sr'):
+            if self.checkSubMaster(username):
+                amount = messageLower.replace('!!sr ', '')
+                if amount.isnumeric():
+                    amount = int(amount)
+                    if amount > 5:
+                        amount = 5
+                else:
+                    amount = 1
+
+                #if not hasattr(self, 'songRequestsModule'):
+                #    import randomList
+                #    self.songRequestsModule = randomList.randomList()
+                #    # TODO: load file to list
+
+                for i in range(amount):
+                    self.chat('!sr ' + self.songRequestsModule.getElement())
+                    sleep(1)
 
         elif '!want' == messageLower:
             answerMessage = ''
