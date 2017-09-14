@@ -192,7 +192,7 @@ class tBot(object):
                 self.rudes[rudeUsername] = 1
                 helper.saveJson(self.rudesFile, self.rudes)
 
-        elif message.startswith('!sr'):
+        elif not config.LOBOTOMY and message.startswith('!sr'):
             if self.checkMaster(username, '', True):
                 songRequest = message.replace('!sr ', '')
                 if not songRequest in self.songRequests:
@@ -200,7 +200,7 @@ class tBot(object):
                     helper.saveJson(self.songRequestsFile, self.songRequests)
                     self.songRequestsModule.loadFromDict(self.songRequests)
 
-        elif messageLower.startswith('!!sr'):
+        elif not config.LOBOTOMY and messageLower.startswith('!!sr'):
             if self.checkSubMaster(username):
                 amount = messageLower.replace('!!sr ', '')
                 if amount.isnumeric():
@@ -219,7 +219,7 @@ class tBot(object):
                     self.chat('!sr ' + self.songRequestsModule.getElement())
                     sleep(1)
 
-        elif '!want' == messageLower:
+        elif not config.LOBOTOMY and '!want' == messageLower:
             answerMessage = ''
             if username in self.giveAways:
                 if self.giveAways[username] == 1:
@@ -234,7 +234,7 @@ class tBot(object):
             self.whisper(username, answerMessage)
             self.chat(answerMessage, 1)
 
-        elif '!wantsome' == messageLower or '!whowantsome' == messageLower:
+        elif not config.LOBOTOMY and ('!wantsome' == messageLower or '!whowantsome' == messageLower):
             answerMessage = ''
             userAllowedList = []
             for wantName, wantHas in self.giveAways.items():
@@ -252,7 +252,7 @@ class tBot(object):
 
             self.chat(answerMessage)
 
-        elif '!wantyougone' == messageLower:
+        elif not config.LOBOTOMY and '!wantyougone' == messageLower:
             if username == config.NICK or self.checkMaster(username):
                 allGotOne = {}
                 oldUserCount = len(self.giveAways)
@@ -264,7 +264,7 @@ class tBot(object):
                 self.chat('i removed ' + str(oldUserCount - len(self.giveAways)) + " users from the !want list (i'm so sorry)")
                 helper.saveJson(self.giveAwayFile, self.giveAways)
 
-        elif '!getsome' == messageLower:
+        elif not config.LOBOTOMY and '!getsome' == messageLower:
             if username == config.NICK or self.checkMaster(username):
                 import random
 
@@ -305,12 +305,14 @@ class tBot(object):
                 self.chat('i will forget everything...')
                 self.chatMemory.clean(True)
                 self.timerMemory.clean(True)
-        elif messageLower.startswith('!wetten'):
+
+        elif not config.LOBOTOMY and  messageLower.startswith('!wetten'):
             if not hasattr(self, 'wette'):
                 import iBet
                 self.wette = iBet.iBet(self)
             self.wette.commands(username, message, messageLower)
-        elif message.startswith('!addGreeting'):
+
+        elif not config.LOBOTOMY and message.startswith('!addGreeting'):
             if self.checkMaster(username):
                 cmdParts = message.split(' ')
                 if len(cmdParts) < 4:
@@ -330,7 +332,7 @@ class tBot(object):
                     self.userGreetings[_userName] = {'triggerOn':_triggerOn, 'text':_text}
                     helper.saveJson(self.userGreetingsFile, self.userGreetings)
 
-        elif messageLower.startswith('!match'):
+        elif not config.LOBOTOMY and messageLower.startswith('!match'):
             if messageLower == '!match':
                 if username in self.matchList:
                     self.chat(chatName + ' du bist schon in der liste an Platz ' + str(self.matchList.index(username) + 1))
@@ -489,7 +491,8 @@ class tBot(object):
                 if message == intervalKey:
                     self.timerMemory.setTimeFor(intervalKey, intervalTime)
                 elif not self.timerMemory.isInMemory(intervalKey):
-                    self.chat(intervalKey)
+                    if not config.LOBOTOMY:
+                        self.chat(intervalKey)
                     self.timerMemory.add(intervalKey, intervalTime)
                     sleep(2.2)
 
@@ -501,7 +504,7 @@ class tBot(object):
 
             elif config.NICK in message:
                 # direct talk
-                rudeWords = ['klappe', 'schnauze', 'fresse']
+                rudeWords = ['klappe', 'schnauze', 'fresse', 'idiot']
                 if any(rudeWord in messageLower for rudeWord in rudeWords):
                     self.chat('THAT was rude @' + username)
                     self.rudes[username] = 1
@@ -536,9 +539,9 @@ class tBot(object):
                         if self.momentumIndex >= len(momentumList)-1:
                             self.chatMemory.add('MOMENTUM_TALK_LOCK', 60*25)
 
-            elif 'chemie ' in messageLower or ' chemie' in messageLower:
+            elif not config.LOBOTOMY and ('chemie ' in messageLower or ' chemie' in messageLower):
                 self.chat("baukasten")
-            elif 'hamster' in  messageLower:
+            elif not config.LOBOTOMY and 'hamster' in  messageLower:
                 self.chat("HAMSTER! \o/")
             elif username in self.userGreetings and self.userGreetings[username]['triggerOn'] == message:
                 self.chat(self.userGreetings[username]['text'], 120)
