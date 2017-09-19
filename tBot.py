@@ -502,65 +502,67 @@ class tBot(object):
             elif self.checkRude(username):
                 helper.log('RUDE BLOCK: ' + username)
 
-            elif config.NICK in message:
-                # direct talk
-                rudeWords = ['klappe', 'schnauze', 'fresse', 'idiot']
-                if any(rudeWord in messageLower for rudeWord in rudeWords):
-                    self.chat('THAT was rude @' + username)
-                    self.rudes[username] = 1
-                    helper.saveJson(self.rudesFile, self.rudes)
             elif message[0] == '!':
                 self.commands(username, message, messageLower)
-            elif 'bison' in messageLower and ('hi ' in messageLower or 'hallo ' in messageLower or 'nabend ' in messageLower):
-                self.chat("hi " + username + " o/")
-            elif 'momentum' in messageLower:
-                if username == 'varu7777777':
-                     self.chat("@" + username + ' und die erde ne scheibe :P')
-                else:
-                    momentumList = [
-                        ' Wir sind der Tempel der Momentum Verleugner. Man verliert wegen sich, nicht weil das Spiel entscheidet, dass man nicht gewinnen darf. Nächste Messe: morgen um 10:00. Kappa',
-                        ' Nun bemerket doch, in welch heiligen Hallen wir uns befinden und huldigt denen die schweigend 40:0 darbieten und den Momentum Teufel Lügen strafen!',
-                        'Bekehret Euer Selbstbildnis und den Glauben an Eure Stärken. Wendet Euch ab von höheren Mächten die Euch verlieren sehen wollen und wendet Euch Training und Leidenschaft zu. Lasset dies die Nahrung für Euren wachsenden FIFA Erfolg sein. Realtalk: Momentum-ich darf nicht gewinnen-MiMiMi nervt und findet hier keine Zustimmung. Danke. :)',
-                        '/timeout ' + username +' 66'
-                                    ]
-                    momentumText = ''
 
-                    if not self.chatMemory.isInMemory('MOMENTUM_TALK_LOCK') and self.momentumIndex >= len(momentumList)-1:
-                        self.momentumIndex = 0
+            elif not config.LOBOTOMY:
+                if 'bison' in messageLower and ('hi ' in messageLower or 'hallo ' in messageLower or 'nabend ' in messageLower):
+                    self.chat("hi " + username + " o/")
+                elif config.NICK in message:
+                    # direct talk
+                    rudeWords = ['klappe', 'schnauze', 'fresse', 'idiot']
+                    if any(rudeWord in messageLower for rudeWord in rudeWords):
+                        self.chat('THAT was rude @' + username)
+                        self.rudes[username] = 1
+                        helper.saveJson(self.rudesFile, self.rudes)
+                elif 'momentum' in messageLower:
+                    if username == 'varu7777777':
+                         self.chat("@" + username + ' und die erde ne scheibe :P')
+                    else:
+                        momentumList = [
+                            ' Wir sind der Tempel der Momentum Verleugner. Man verliert wegen sich, nicht weil das Spiel entscheidet, dass man nicht gewinnen darf. Nächste Messe: morgen um 10:00. Kappa',
+                            ' Nun bemerket doch, in welch heiligen Hallen wir uns befinden und huldigt denen die schweigend 40:0 darbieten und den Momentum Teufel Lügen strafen!',
+                            'Bekehret Euer Selbstbildnis und den Glauben an Eure Stärken. Wendet Euch ab von höheren Mächten die Euch verlieren sehen wollen und wendet Euch Training und Leidenschaft zu. Lasset dies die Nahrung für Euren wachsenden FIFA Erfolg sein. Realtalk: Momentum-ich darf nicht gewinnen-MiMiMi nervt und findet hier keine Zustimmung. Danke. :)',
+                            '/timeout ' + username +' 66'
+                                        ]
+                        momentumText = ''
 
-                    if self.momentumIndex <= len(momentumList)-1:
-                        momentumText = momentumList[self.momentumIndex]
-                        self.momentumIndex += 1
-                        if momentumText.startswith('/'):
-                            self.chat(momentumText)
-                        else:
-                            self.chat("@" + username + momentumText)
+                        if not self.chatMemory.isInMemory('MOMENTUM_TALK_LOCK') and self.momentumIndex >= len(momentumList)-1:
+                            self.momentumIndex = 0
 
-                        if self.momentumIndex >= len(momentumList)-1:
-                            self.chatMemory.add('MOMENTUM_TALK_LOCK', 60*25)
+                        if self.momentumIndex <= len(momentumList)-1:
+                            momentumText = momentumList[self.momentumIndex]
+                            self.momentumIndex += 1
+                            if momentumText.startswith('/'):
+                                self.chat(momentumText)
+                            else:
+                                self.chat("@" + username + momentumText)
 
-            elif not config.LOBOTOMY and ('chemie ' in messageLower or ' chemie' in messageLower):
-                self.chat("baukasten")
-            elif not config.LOBOTOMY and 'hamster' in  messageLower:
-                self.chat("HAMSTER! \o/")
-            elif username in self.userGreetings and self.userGreetings[username]['triggerOn'] == message:
-                self.chat(self.userGreetings[username]['text'], 120)
-            elif len(messageLower) <= 42:
-                if 'nabend' in messageLower \
-                        or 'moin' in messageLower \
-                        or 'huhu' in messageLower \
-                        or 'hallo' in messageLower \
-                        or 'guten abend'in messageLower \
-                        or 'servus'in messageLower:
-                    if username in self.userGreetings:
-                        if self.userGreetings[username]['triggerOn'] == '*' and not self.chatMemory.isInMemory(self.userGreetings[username]['text']):
-                            self.chat(self.userGreetings[username]['text'], 120)
-                    elif not self.chatMemory.isInMemory('_GREETING_'):
-                        self.chatMemory.add('_GREETING_', 120)
-                        import random
-                        greetText = random.choice(['ohai', 'hallo @' + username, 'servus', 'noot noot @' + username])
-                        greetText +=  random.choice(['', ' o/'])
-                        self.chat(greetText, 120)
+                            if self.momentumIndex >= len(momentumList)-1:
+                                self.chatMemory.add('MOMENTUM_TALK_LOCK', 60*25)
+
+                elif 'chemie ' in messageLower or ' chemie' in messageLower:
+                    self.chat("baukasten")
+                elif 'hamster' in  messageLower:
+                    self.chat("HAMSTER! \o/")
+                elif username in self.userGreetings and self.userGreetings[username]['triggerOn'] == message:
+                    self.chat(self.userGreetings[username]['text'], 120)
+                elif len(messageLower) <= 42:
+                    if 'nabend' in messageLower \
+                            or 'moin' in messageLower \
+                            or 'huhu' in messageLower \
+                            or 'hallo' in messageLower \
+                            or 'guten abend'in messageLower \
+                            or 'servus'in messageLower:
+                        if username in self.userGreetings:
+                            if self.userGreetings[username]['triggerOn'] == '*' and not self.chatMemory.isInMemory(self.userGreetings[username]['text']):
+                                self.chat(self.userGreetings[username]['text'], 120)
+                        elif not self.chatMemory.isInMemory('_GREETING_'):
+                            self.chatMemory.add('_GREETING_', 120)
+                            import random
+                            greetText = random.choice(['ohai', 'hallo @' + username, 'servus', 'noot noot @' + username])
+                            greetText +=  random.choice(['', ' o/'])
+                            self.chat(greetText, 120)
             else:
                 pass
                 #helper.log('UNKNOWN:' + response)
