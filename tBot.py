@@ -483,7 +483,7 @@ class tBot(object):
                 message = CHAT_MSG.sub("", response)
             except Exception as ex:
                 helper.log('executor: ' + str(ex) + ' response:' + response)
-                return  self.EXECUTOR_STATE_DEAD
+                return self.EXECUTOR_STATE_DEAD
 
             message = message.strip()
             messageLower = message.lower()
@@ -633,6 +633,7 @@ class tBot(object):
         """
 
         :type msg: string
+        :type memoryLifeTime: int
         """
 
         if self.chatMemory.isInMemory(msg):
