@@ -41,7 +41,7 @@ class tBot(object):
         self.myMastersFile = 'myMasters.json'
         myMastersTmp = helper.loadJson(self.myMastersFile)
         if myMastersTmp is not None:
-           self.myMasters = myMastersTmp
+            myMasters = myMastersTmp
         if STREAMER_NAME not in self.myMasters:
             self.myMasters[STREAMER_NAME] = STREAMER_NAME
 
@@ -49,7 +49,7 @@ class tBot(object):
         self.mySubMastersFile = 'mySubMasters.json'
         mySubMastersTmp = helper.loadJson(self.mySubMastersFile)
         if mySubMastersTmp is not None:
-           self.mySubMasters = mySubMastersTmp
+            self.mySubMasters = mySubMastersTmp
 
         self.revivedCounter = 0
 
@@ -63,31 +63,31 @@ class tBot(object):
 
         dynamicCommandsTmp = helper.loadJson(self.dynamicCommandsFile)
         if dynamicCommandsTmp is not None:
-           self.dynamicCommands = dynamicCommandsTmp
+            self.dynamicCommands = dynamicCommandsTmp
 
         self.userGreetingsFile = 'userGreetings.json'
         self.userGreetings = {}
         userGreetingsTmp = helper.loadJson(self.userGreetingsFile)
         if userGreetingsTmp is not None:
-           self.userGreetings = userGreetingsTmp
+            self.userGreetings = userGreetingsTmp
 
         self.giveAwayFile = 'giveAway.json'
         self.giveAways = {}
         giveAwaysTmp = helper.loadJson(self.giveAwayFile)
         if giveAwaysTmp is not None:
-           self.giveAways = giveAwaysTmp
+            self.giveAways = giveAwaysTmp
 
         self.rudesFile = 'rudes.json'
         self.rudes = {}
         rudesTmp = helper.loadJson(self.rudesFile)
         if rudesTmp is not None:
-           self.rudes = rudesTmp
+            self.rudes = rudesTmp
 
         self.songRequestsFile = 'songRequests.json'
         self.songRequests = {}
         songRequestsTmp = helper.loadJson(self.songRequestsFile)
         if songRequestsTmp is not None:
-           self.songRequests = songRequestsTmp
+            self.songRequests = songRequestsTmp
         self.songRequestsModule = randomList.randomList()
         self.songRequestsModule.loadFromDict(self.songRequests)
 
