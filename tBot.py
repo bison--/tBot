@@ -13,6 +13,7 @@ if os.path.isfile('config_local.py'):
 else:
     import config
 
+STREAMER_NAME = config.CHAN.replace('#', '')
 #http://www.twitchapps.com/tmi/
 #http://dev.twitch.tv/
 #https://help.twitch.tv/customer/de/portal/articles/1302780-twitch-irc
@@ -41,6 +42,8 @@ class tBot(object):
         myMastersTmp = helper.loadJson(self.myMastersFile)
         if myMastersTmp is not None:
            self.myMasters = myMastersTmp
+        if STREAMER_NAME not in self.myMasters:
+            self.myMasters[STREAMER_NAME] = STREAMER_NAME
 
         self.mySubMasters = {'tomblex':'tomblex', 'Racesore':'Racesore', 'Plantprogrammer':'Plantprogrammer'}
         self.mySubMastersFile = 'mySubMasters.json'
@@ -506,8 +509,15 @@ class tBot(object):
                 self.commands(username, message, messageLower)
 
             elif not config.LOBOTOMY:
-                if 'bison' in messageLower and ('hi ' in messageLower or 'hallo ' in messageLower or 'nabend ' in messageLower):
+                if ('bison' in messageLower or STREAMER_NAME in messageLower) \
+                        and (
+                            'hi ' in messageLower
+                            or 'hallo ' in messageLower
+                            or 'nabend ' in messageLower
+                            or 'noot noot' in messageLower
+                        ):
                     self.chat("hi " + username + " o/")
+                    self.chatMemory.add('_GREETING_' + username, 60*60)
                 elif config.NICK in message:
                     # direct talk
                     rudeWords = ['klappe', 'schnauze', 'fresse', 'idiot']
@@ -551,16 +561,20 @@ class tBot(object):
                     if 'nabend' in messageLower \
                             or 'moin' in messageLower \
                             or 'huhu' in messageLower \
-                            or 'hallo' in messageLower \
+                            or ('hallo' in messageLower and not 'halloween' in messageLower) \
                             or 'guten abend'in messageLower \
                             or 'servus'in messageLower:
-                        if username in self.userGreetings:
+                        if self.chatMemory.isInMemory('_GREETING_' + username):
+                            pass
+                        elif username in self.userGreetings:
                             if self.userGreetings[username]['triggerOn'] == '*' and not self.chatMemory.isInMemory(self.userGreetings[username]['text']):
+                                self.chatMemory.add('_GREETING_' + username, 60*60)
                                 self.chat(self.userGreetings[username]['text'], 120)
                         elif not self.chatMemory.isInMemory('_GREETING_'):
                             self.chatMemory.add('_GREETING_', 120)
+                            self.chatMemory.add('_GREETING_' + username, 60*60)
                             import random
-                            greetText = random.choice(['ohai', 'hallo @' + username, 'servus', 'noot noot @' + username])
+                            greetText = random.choice(['ohai', 'ohai' + username, 'hallo @' + username, 'servus', 'noot noot @' + username])
                             greetText +=  random.choice(['', ' o/'])
                             self.chat(greetText, 120)
             else:
