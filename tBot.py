@@ -520,7 +520,7 @@ class tBot(object):
                     self.chatMemory.add('_GREETING_' + username, 60*60)
                 elif config.NICK in message:
                     # direct talk
-                    rudeWords = ['klappe', 'schnauze', 'fresse', 'idiot']
+                    rudeWords = ['klappe', 'schnauze', 'fresse', 'idiot', 'nerven', 'nervt']
                     if any(rudeWord in messageLower for rudeWord in rudeWords):
                         self.chat('THAT was rude @' + username)
                         self.rudes[username] = 1
