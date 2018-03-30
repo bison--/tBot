@@ -563,7 +563,8 @@ class tBot(object):
                             or 'huhu' in messageLower \
                             or ('hallo' in messageLower and not 'halloween' in messageLower) \
                             or 'guten abend'in messageLower \
-                            or 'servus'in messageLower:
+                            or 'servus'in messageLower \
+                            or 'noot noot' in messageLower:
                         if self.chatMemory.isInMemory('_GREETING_' + username):
                             pass
                         elif username in self.userGreetings:
