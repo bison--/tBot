@@ -575,7 +575,7 @@ class tBot(object):
                             self.chatMemory.add('_GREETING_', 120)
                             self.chatMemory.add('_GREETING_' + username, 60*60)
                             import random
-                            greetText = random.choice(['ohai', 'ohai' + username, 'hallo @' + username, 'servus', 'noot noot @' + username])
+                            greetText = random.choice(['ohai', 'ohai @' + username, 'hallo @' + username, 'servus', 'noot noot @' + username])
                             greetText +=  random.choice(['', ' o/'])
                             self.chat(greetText, 120)
             else:
