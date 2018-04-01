@@ -468,8 +468,8 @@ class tBot(object):
             self.connected = False
             return self.EXECUTOR_STATE_DEAD
 
-        if response is None:
-            return  self.EXECUTOR_STATE_EMPTY
+        if response is None or response == '':
+            return self.EXECUTOR_STATE_EMPTY
 
         if response == "PING :tmi.twitch.tv\r\n":
             self.sock.send("PONG :tmi.twitch.tv\r\n".encode())
