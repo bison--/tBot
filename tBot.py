@@ -34,6 +34,7 @@ class tBot(object):
         self.sock = socket.socket()
         self.sock.settimeout(SOCKET_TIMEOUT)
         self.timeoutCounter = 0
+        self.lastTimeMessageReceived = 0
         self.connected = False
         self.die = False
 
@@ -455,6 +456,8 @@ class tBot(object):
         try:
             received = self.sock.recv(2048)
             response = received.decode("utf-8")
+            if response.strip() != '':
+                self.lastTimeMessageReceived = time.time()
             self.timeoutCounter = 0
         except socket.timeout:
             #helper.log('timeout')
@@ -462,6 +465,11 @@ class tBot(object):
         except Exception as ex:
             self.connected = False
             helper.log('FATAL recv ERROR: ' + str(ex))
+
+        if self.lastTimeMessageReceived > 0 and time.time() > (self.lastTimeMessageReceived + 600):
+            helper.log('lastTimeMessageReceived ERROR: ' + str(self.lastTimeMessageReceived))
+            self.connected = False
+            return self.EXECUTOR_STATE_DEAD
 
         if self.timeoutCounter >= 400:
             helper.log('timeoutCounter ERROR: ' + str(self.timeoutCounter))
