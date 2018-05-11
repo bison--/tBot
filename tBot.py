@@ -92,6 +92,8 @@ class tBot(object):
         self.songRequestsModule = randomList.randomList()
         self.songRequestsModule.loadFromDict(self.songRequests)
 
+        self.tquest = None
+
         self.usersInChatLastRefresh = 0
         self.usersInChat = set()
 
@@ -297,6 +299,22 @@ class tBot(object):
                             self.chat('and the winner is: @' + _userGetOne)
                         else:
                             self.chat('something went wrong!')
+
+        elif config.TQUEST_URL != '' and message.startswith('!tquest'):
+            try:
+                import tquest
+
+                if self.tquest == None:
+                    self.tquest = tquest.tquest()
+
+                readyMessage = message.replace('!tquest', '')
+                self.tquest.command(username, readyMessage)
+                if self.tquest.toSend != '':
+                    self.chat(self.tquest.toSend)
+                    self.tquest.toSend = ''
+
+            except Exception as ex:
+                print('tquest error:', ex)
 
         elif '!alive' == messageLower:
             if not self.chatMemory.isInMemory('!alive'):
