@@ -520,8 +520,9 @@ class tBot(object):
                 if message == intervalKey:
                     self.timerMemory.setTimeFor(intervalKey, intervalTime)
                 elif not self.timerMemory.isInMemory(intervalKey):
-                    if not config.LOBOTOMY:
-                        self.chat(intervalKey)
+                    ## no lobotomy for configs!
+                    # if not config.LOBOTOMY:
+                    self.chat(intervalKey)
                     self.timerMemory.add(intervalKey, intervalTime)
                     sleep(2.2)
 
