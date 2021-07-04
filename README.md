@@ -113,16 +113,24 @@ The bot can greet users, add OR change a greeting text with:
 ## submaster
 
 add/remove sub masters  
-WARNING: case sensitive!
+WARNING: case-sensitive!
 
 * `!!submaster list` shows all sub masters
 * `!!submaster add someTwitchUser` adds someTwitchUser as new sub master
 * `!!submaster remove someTwitchUser` removes someTwitchUser as sub masters
 
+## list
+
+Access various lists.
+
+* `!!list masters`
+* `!!list submasters`
+* `!!list dynamiccommands`
 
 ## other commands
 
+* `!!masters list` list masters
 * `!silence` activate/deactivate ALL chats from the bot
 * `!takebluepill`, `!bluepill` kills the short time memory / resets all timers for chat and interval messages
-* `!rude add someTwitchUser` adds a user to the RUDE list and he will be completely ignored. Username is case sensitive AND without the @
+* `!rude add someTwitchUser` adds a user to the RUDE list and he will be completely ignored. Username is case-sensitive AND without the @
 

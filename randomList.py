@@ -1,5 +1,6 @@
 import random
 
+
 class randomList(object):
     def __init__(self):
         self.elements = [
@@ -27,6 +28,7 @@ class randomList(object):
         for entry in entries:
             if not entry in self.elements:
                 self.elements.append(entry)
+
 
 if __name__ == "__main__":
     rl = randomList()

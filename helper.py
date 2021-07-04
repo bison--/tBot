@@ -60,6 +60,7 @@ def log(msg):
     """
     print(time.strftime("%Y-%m-%d %H:%M:%S: ") + msg)
 
+
 def popGiveAway():
     allLines = open('giveAways.txt', 'r').readlines()
     newLines = ''
@@ -69,7 +70,7 @@ def popGiveAway():
         if returnLine == '' and line != '' and line[0] != '#':
             returnLine = line
             newLines += '#' + line + "\n"
-        elif line != '' :
+        elif line != '':
             newLines += line + "\n"
 
     writeHandle = open('giveAways.txt', 'w')
@@ -77,3 +78,11 @@ def popGiveAway():
     writeHandle.close()
     #print(allLines)
     return returnLine
+
+
+def dictToChat(_dict):
+    msg = ''
+    for key, value in _dict.items():
+        msg += '{}: {}, '.format(key, value)
+
+    return msg.strip(', ')

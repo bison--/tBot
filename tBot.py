@@ -38,7 +38,7 @@ class tBot(object):
         self.connected = False
         self.die = False
 
-        self.myMasters = {'timkalation':'timkalation', 'bison_42':'bison_42', 'raymonddoerr':'raymonddoerr'}
+        self.myMasters = {'timkalation': 'timkalation', 'bison_42': 'bison_42', 'raymonddoerr': 'raymonddoerr'}
         self.myMastersFile = 'myMasters.json'
         myMastersTmp = helper.loadJson(self.myMastersFile)
         if myMastersTmp is not None:
@@ -46,7 +46,7 @@ class tBot(object):
         if STREAMER_NAME not in self.myMasters:
             self.myMasters[STREAMER_NAME] = STREAMER_NAME
 
-        self.mySubMasters = {'tomblex':'tomblex', 'Racesore':'Racesore', 'Plantprogrammer':'Plantprogrammer'}
+        self.mySubMasters = {'Plantprogrammer': 'Plantprogrammer'}
         self.mySubMastersFile = 'mySubMasters.json'
         mySubMastersTmp = helper.loadJson(self.mySubMastersFile)
         if mySubMastersTmp is not None:
@@ -97,6 +97,8 @@ class tBot(object):
         self.usersInChatLastRefresh = 0
         self.usersInChat = set()
 
+        self.messageQueue = []
+
         self.EXECUTOR_STATE_DEAD = 0
         self.EXECUTOR_STATE_OK = 1
         self.EXECUTOR_STATE_EMPTY = 2
@@ -133,7 +135,7 @@ class tBot(object):
             return True
         return False
 
-    def getIntegratedList(self, listName = ''):
+    def getIntegratedList(self, listName=''):
         if listName == 'submasters':
             return self.mySubMasters
         elif listName == 'masters':
@@ -141,7 +143,7 @@ class tBot(object):
         elif listName == 'dynamiccommands':
             return self.dynamicCommands
 
-        return {'UNKNOWN:':listName}
+        return {'UNKNOWN:': listName}
 
     def commands(self, username, message, messageLower):
         chatName = '@' + username
@@ -342,7 +344,7 @@ class tBot(object):
                 else:
                     _userName = cmdParts[1]
                     _triggerOn = cmdParts[2]
-                    if (_triggerOn[0] == '!'):
+                    if _triggerOn[0] == '!':
                         self.chat(chatName + ' this is wrong! commands with "!" NOT allowed!!1!')
                         return
 
@@ -351,7 +353,7 @@ class tBot(object):
                         self.chat(chatName + ' i will change my greeting for "' + _userName + '"')
                     else:
                         self.chat(chatName + ' i added "' + _userName + '" to my greeting log!')
-                    self.userGreetings[_userName] = {'triggerOn':_triggerOn, 'text':_text}
+                    self.userGreetings[_userName] = {'triggerOn': _triggerOn, 'text': _text}
                     helper.saveJson(self.userGreetingsFile, self.userGreetings)
 
         elif not config.LOBOTOMY and messageLower.startswith('!match'):
@@ -439,6 +441,14 @@ class tBot(object):
                         del self.dynamicCommands[cmdKey]
                         helper.saveJson(self.dynamicCommandsFile, self.dynamicCommands)
 
+        elif message.startswith('!!list'):
+            if self.checkSubMaster(username):
+                parts = messageLower.split()
+                if len(parts) == 2:
+                    listOfThings = self.getIntegratedList(parts[1])
+                    msg = ', '.join(listOfThings)
+                    self.chat(msg)
+
         elif message in self.dynamicCommands:
             self.chat(self.dynamicCommands[message])
 
@@ -497,6 +507,9 @@ class tBot(object):
         if response is None or response == '':
             return self.EXECUTOR_STATE_EMPTY
 
+        if self.sendMessageQueue():
+            time.sleep(1)  # anti-spam protection
+
         if response == "PING :tmi.twitch.tv\r\n":
             self.sock.send("PONG :tmi.twitch.tv\r\n".encode())
             helper.log("PONG")
@@ -554,7 +567,7 @@ class tBot(object):
                         helper.saveJson(self.rudesFile, self.rudes)
                 elif 'momentum' in messageLower:
                     if username == 'varu7777777':
-                         self.chat("@" + username + ' und die erde ne scheibe :P')
+                        self.chat("@" + username + ' und die erde ne scheibe :P')
                     else:
                         momentumList = [
                             ' Wir sind der Tempel der Momentum Verleugner. Man verliert wegen sich, nicht weil das Spiel entscheidet, dass man nicht gewinnen darf. Nächste Messe: morgen um 10:00. Kappa',
@@ -580,7 +593,7 @@ class tBot(object):
 
                 elif 'chemie ' in messageLower or ' chemie' in messageLower:
                     self.chat("baukasten")
-                elif 'hamster' in  messageLower:
+                elif 'hamster' in messageLower:
                     self.chat("HAMSTER! \o/")
                 elif username in self.userGreetings and self.userGreetings[username]['triggerOn'] == message:
                     self.chat(self.userGreetings[username]['text'], 120)
@@ -589,8 +602,8 @@ class tBot(object):
                             or 'moin' in messageLower \
                             or 'huhu' in messageLower \
                             or ('hallo' in messageLower and not 'halloween' in messageLower) \
-                            or 'guten abend'in messageLower \
-                            or 'servus'in messageLower \
+                            or 'guten abend' in messageLower \
+                            or 'servus' in messageLower \
                             or 'noot noot' in messageLower:
                         if self.chatMemory.isInMemory('_GREETING_' + username):
                             pass
@@ -603,7 +616,7 @@ class tBot(object):
                             self.chatMemory.add('_GREETING_' + username, 60*60)
                             import random
                             greetText = random.choice(['ohai', 'ohai @' + username, 'hallo @' + username, 'servus', 'noot noot @' + username])
-                            greetText +=  random.choice(['', ' o/'])
+                            greetText += random.choice(['', ' o/'])
                             self.chat(greetText, 120)
             else:
                 pass
@@ -656,7 +669,7 @@ class tBot(object):
 
         return True
 
-    def chat(self, msg, memoryLifeTime = 30):
+    def chat(self, msg, memoryLifeTime=30, chatDelay=0):
         """
 
         :type msg: string
@@ -672,6 +685,35 @@ class tBot(object):
             return False
 
         self.chatMemory.add(msg, memoryLifeTime)
+        self.addMessageQueue(msg)
+
+        if chatDelay > 0:
+            time.sleep(chatDelay)
+
+        # for commands that rely on a timeout send one instantly for an outer-function sleep-loop
+        # TODO: hope that there is nothing else in the buffer ^^"
+        return self.sendMessageQueue()
+
+    def addMessageQueue(self, msg='', maxLength=499):
+        if len(msg) <= maxLength:
+            self.messageQueue.append(msg)
+
+        words = msg.split()
+        rebuildParts = ''
+        for word in words:
+            rebuildPartsTest = rebuildParts + word
+            if len(rebuildPartsTest) >= maxLength:
+                self.messageQueue.append(rebuildParts)
+                rebuildParts = ''
+            else:
+                rebuildParts = rebuildPartsTest
+
+    def sendMessageQueue(self):
+        if len(self.messageQueue) == 0:
+            return False
+
+        msg = self.messageQueue.pop(0)
+
         helper.log('sending... "' + msg + '"')
         try:
             self.sock.send("PRIVMSG {} :{}\r\n".format(CHAN, msg).encode())
@@ -685,6 +727,8 @@ class tBot(object):
 if __name__ == "__main__":
     keepRunning = True
     revivedCount = 0
+    time.sleep(config.LAUNCH_DELAY)
+
     while keepRunning:
         revivedCount += 1
         helper.log('REVIVED: ' + str(revivedCount))

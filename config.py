@@ -2,11 +2,18 @@ NICK = 'myNick'
 PASS = 'oauth:blah'
 CHAN = '#timkalation'
 
+# removes nearly all auto-talk functionallity from the ghost
 LOBOTOMY = False
+
+# launch the ghost in !silence mode
 START_SILENT = False
 
+# re-connect delay the ghost disconnects
 REANIMATE_IN_SECONDS = 5 * 60
 
-INTERVALS = {'!social': 15*60}
+# launch delay in seconds, for auto-respawn systems to not fail too often whgen twich has a network issue
+LAUNCH_DELAY = 1
+
+INTERVALS = {'!social': 15 * 60}
 
 TQUEST_URL = ''
