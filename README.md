@@ -14,11 +14,11 @@ This bot does not use the bot-api, it connects to the irc-server. Yes, twitch is
 
 to add a command follow these steps:
 
-* be **@timkalation** or **@bison_42**
-* type **!add** then the new command (like **!hype**) and then the text you wanted to show
+* be **@timkalation** or **@bison_42** or the streamer (channel name)
+* type **!!add** then the new command (like **!hype**) and then the text you wanted to show
 
 ```
-!add !lol rofl die katz
+!!add !lol rofl die katz
 ```
 
 then you can type 
@@ -35,8 +35,8 @@ rofl die katz
 
 to remove a command follow these steps:
 
-* be **@timkalation** or **@bison_42**
-* type **!del** then the new command (like **!hype**)
+* be **@timkalation** or **@bison_42** or the streamer (channel name)
+* type **!!del** then the new command (like **!hype**)
 
 ```
 !!del !lol
