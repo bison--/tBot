@@ -168,8 +168,8 @@ class tBot(object):
             self.chat("~~~~~~~~~~~~~~~~~~~~~~~~O<")
         elif '!wasstimmtdennmitdirnicht' == messageLower:
             helper.realitycheck(self)
-        elif '!hilfe' == message or '!help' == messageLower:
-            self.chat("help your self :P")
+        elif '!hilfe' == messageLower or '!help' == messageLower or '!commands' == messageLower:
+            self.chat("help your self: https://github.com/bison--/tBot")
         elif '!wassindhamster' == messageLower or '!hamster' == messageLower:
             helper.explainHamster(self)
         elif '!go' == messageLower:
@@ -320,7 +320,7 @@ class tBot(object):
 
         elif '!alive' == messageLower:
             if not self.chatMemory.isInMemory('!alive'):
-                self.chatMemory.add('!alive', 120)
+                self.chatMemory.add('!alive', helper.DURATION_MINUTES_2)
                 secondsAlive = time.time() - self.startTime
                 self.chat('ich bin seit {} sekunden / {} am leben und wurde {}x wiederbelebt'.format(secondsAlive, helper.getReadableTime(secondsAlive), self.revivedCounter))
 
@@ -557,7 +557,7 @@ class tBot(object):
                             or 'noot noot' in messageLower
                         ):
                     self.chat("hi " + username + " o/")
-                    self.chatMemory.add('_GREETING_' + username, 60*60)
+                    self.chatMemory.add('_GREETING_' + username, helper.DURATION_HOURS_1)
                 elif config.NICK in message:
                     # direct talk
                     rudeWords = ['klappe', 'schnauze', 'fresse', 'idiot', 'nerven', 'nervt']
@@ -573,7 +573,7 @@ class tBot(object):
                             ' Wir sind der Tempel der Momentum Verleugner. Man verliert wegen sich, nicht weil das Spiel entscheidet, dass man nicht gewinnen darf. Nächste Messe: morgen um 10:00. Kappa',
                             ' Nun bemerket doch, in welch heiligen Hallen wir uns befinden und huldigt denen die schweigend 40:0 darbieten und den Momentum Teufel Lügen strafen!',
                             'Bekehret Euer Selbstbildnis und den Glauben an Eure Stärken. Wendet Euch ab von höheren Mächten die Euch verlieren sehen wollen und wendet Euch Training und Leidenschaft zu. Lasset dies die Nahrung für Euren wachsenden FIFA Erfolg sein. Realtalk: Momentum-ich darf nicht gewinnen-MiMiMi nervt und findet hier keine Zustimmung. Danke. :)',
-                            '/timeout ' + username +' 66'
+                            #'/timeout ' + username + ' 66'
                                         ]
                         momentumText = ''
 
@@ -589,14 +589,14 @@ class tBot(object):
                                 self.chat("@" + username + momentumText)
 
                             if self.momentumIndex >= len(momentumList)-1:
-                                self.chatMemory.add('MOMENTUM_TALK_LOCK', 60*25)
+                                self.chatMemory.add('MOMENTUM_TALK_LOCK', helper.DURATION_HOURS_2)
 
                 elif 'chemie ' in messageLower or ' chemie' in messageLower:
-                    self.chat("baukasten")
+                    self.chat("baukasten", helper.DURATION_HOURS_2)
                 elif 'hamster' in messageLower:
                     self.chat("HAMSTER! \o/")
                 elif username in self.userGreetings and self.userGreetings[username]['triggerOn'] == message:
-                    self.chat(self.userGreetings[username]['text'], 120)
+                    self.chat(self.userGreetings[username]['text'], helper.DURATION_MINUTES_2)
                 elif len(messageLower) <= 42:
                     if 'nabend' in messageLower \
                             or 'moin' in messageLower \
@@ -609,11 +609,11 @@ class tBot(object):
                             pass
                         elif username in self.userGreetings:
                             if self.userGreetings[username]['triggerOn'] == '*' and not self.chatMemory.isInMemory(self.userGreetings[username]['text']):
-                                self.chatMemory.add('_GREETING_' + username, 60*60)
-                                self.chat(self.userGreetings[username]['text'], 120)
+                                self.chatMemory.add('_GREETING_' + username, helper.DURATION_HOURS_4)
+                                self.chat(self.userGreetings[username]['text'], helper.DURATION_HOURS_4)
                         elif not self.chatMemory.isInMemory('_GREETING_'):
-                            self.chatMemory.add('_GREETING_', 120)
-                            self.chatMemory.add('_GREETING_' + username, 60*60)
+                            self.chatMemory.add('_GREETING_', helper.DURATION_MINUTES_2)
+                            self.chatMemory.add('_GREETING_' + username, helper.DURATION_HOURS_4)
                             import random
                             greetText = random.choice(['ohai', 'ohai @' + username, 'hallo @' + username, 'servus', 'noot noot @' + username])
                             greetText += random.choice(['', ' o/'])
@@ -674,6 +674,7 @@ class tBot(object):
 
         :type msg: string
         :type memoryLifeTime: int
+        :type chatDelay: int
         """
 
         if self.chatMemory.isInMemory(msg):

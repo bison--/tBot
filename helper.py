@@ -2,6 +2,11 @@ import time
 import json
 
 
+DURATION_MINUTES_2 = 120
+DURATION_HOURS_1 = 3600
+DURATION_HOURS_2 = DURATION_HOURS_1 * 2
+DURATION_HOURS_4 = DURATION_HOURS_1 * 4
+
 def realitycheck(bot):
     """
 
