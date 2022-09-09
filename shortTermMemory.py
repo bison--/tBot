@@ -77,6 +77,4 @@ if __name__ == "__main__":
     stm.add('test2')
     time.sleep(5)
     stm.add('test3')
-    stm.clean(4)
     stm.clean()
-
