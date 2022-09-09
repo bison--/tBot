@@ -34,7 +34,6 @@ def chat(sock, msg):
 
 
 def get_flirt_message():
-
     message_options = [
         'mau',
         'mrau',
@@ -67,7 +66,7 @@ def main_loop():
 
     while connected:
         if time.time() >= next_interaction:
-            next_interaction = time.time() + random.randint(60, 1000)
+            next_interaction = time.time() + random.randint(60, 3600)
             chat(s, "@Koernerkissenkatze " + get_flirt_message())
 
         try:
@@ -77,22 +76,25 @@ def main_loop():
                 log("PONG")
             else:
                 username = re.search(r"\w+", response).group(0)
-                message = CHAT_MSG.sub("", response)
-
-                message = message.strip()
-                messageLower = message.lower()
-
-                if username == 'koernerkissenkatze':
-                    chat(s, "@Koernerkissenkatze <3 <3 <3 " + get_flirt_message() + ' <3 <3 <3')
-
                 # log(username + ": " + message)
 
                 if username == 'tmi' or username == config.NICK:
-                    pass
-                #elif "!test" == messageLower:
-                #    chat(s, "HAMSTER!")
-                #elif 'hamster' in message:
-                #    chat(s, "HAMSTER! \o/")
+                    continue
+
+                message = CHAT_MSG.sub("", response)
+
+                message = message.strip()
+                message_lower = message.lower()
+
+                if username == 'koernerkissenkatze':
+                    answer_her_call = False
+                    if 'koernerkissenkater' in message_lower:
+                        answer_her_call = True
+                    else:
+                        answer_her_call = random.randint(0, 100) >= 75
+
+                    if answer_her_call:
+                        chat(s, "@Koernerkissenkatze <3 <3 <3 " + get_flirt_message() + ' <3 <3 <3')
 
         except Exception as ex:
             print(ex)
