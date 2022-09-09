@@ -82,7 +82,10 @@ def main_loop():
                 message = message.strip()
                 messageLower = message.lower()
 
-                log(username + ": " + message)
+                if username == 'koernerkissenkatze':
+                    chat(s, "@Koernerkissenkatze <3 <3 <3 " + get_flirt_message() + ' <3 <3 <3')
+
+                # log(username + ": " + message)
 
                 if username == 'tmi' or username == config.NICK:
                     pass
