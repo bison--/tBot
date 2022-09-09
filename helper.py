@@ -7,20 +7,21 @@ DURATION_HOURS_1 = 3600
 DURATION_HOURS_2 = DURATION_HOURS_1 * 2
 DURATION_HOURS_4 = DURATION_HOURS_1 * 4
 
+
 def realitycheck(bot):
     """
 
     :param bot: tBot
     """
     checks = [
-        '''13.06.2016 10:44 :~: Einmal Popcorn bitte. 50 Liter. http://realitycheck.pl/search/?q=Einmal+Popcorn+bitte.+50+Liter."''',
-        '''02.06.2016 20:52 :~: Saudi Arabi Money Rich http://realitycheck.pl/search/?q=Saudi+Arabi+Money+Rich''',
-        '''13.02.2016 17:54 :~: Die Stange war zu kurz http://realitycheck.pl/search/?q=Die+Stange+war+zu+kurz''',
-        '10.08.2016 15:09 :~: Artikelnummer 3 oder 0 http://realitycheck.pl/search/?q=Artikelnummer+3+oder+0'
+        '29. Juni 2020 08:43 :~: Das Who is Who im Schlachtbetrieb https://realitycheck.pl/post/das-who-is-who-im-schlachtbetr',
+        '30. Juli 2019 16:04 :~: Ist das Schild vegan? https://realitycheck.pl/post/ist-das-schild-vegan''',
+        '31. Mai 2019 08:49 :~: Das mach ich mit links (die Hand ist flacher) https://realitycheck.pl/post/das-mach-ich-mit-links-die-han',
+        '9. März 2019 08:51 :~: Leider ungenügend https://realitycheck.pl/post/leider-ungenugend'
     ]
+
     import random
-    for line in random.choice(checks).split("\n"):
-        bot.chat(line)
+    bot.chat(random.choice(checks))
 
 
 def explainHamster(bot):
