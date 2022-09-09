@@ -1,5 +1,6 @@
 import time
 
+
 class iBet(object):
     def __init__(self, tBot):
         """
@@ -22,6 +23,7 @@ class iBet(object):
         if len(parts) < 2:
             self.tBot.chat('falsches Kommando ' + chatName)
             return False
+
         command = parts[1]
         option = ' '.join(parts[2:])
         print('*' * 10)
@@ -93,7 +95,7 @@ class iBet(object):
 
             self.tBot.chat(stateString)
 
-        elif '!das' ==  command:
+        elif '!das' == command:
             if not self.betsOpen:
                 self.tBot.chat(chatName + 'es werden keine wetten mehr angenommen')
             if username in self.userBets:
@@ -101,4 +103,3 @@ class iBet(object):
             else:
                 self.userBets[username] = option
                 self.tBot.chat(chatName + ' wette auf "' + option + '" angenommen!')
-

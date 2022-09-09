@@ -3,11 +3,11 @@ import helper
 
 if len(sys.argv) == 2:
     if sys.argv[1] == 'dynamic' or True:
-        dict = helper.loadJson('dynamicCommands.json')
-        for key, value in dict.items():
+        jsonData = helper.loadJson('dynamicCommands.json')
+        for key, value in jsonData.items():
             print(key)
 
-        print(10*'-')
+        print(10 * '-')
 
-        for key, value in dict.items():
+        for key, value in jsonData.items():
             print(key, value)

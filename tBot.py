@@ -28,6 +28,7 @@ CHAN = config.CHAN
 CHAT_MSG = re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
 SOCKET_TIMEOUT = 2.0
 
+
 class tBot(object):
     def __init__(self):
         self.startTime = time.time()
@@ -41,8 +42,10 @@ class tBot(object):
         self.myMasters = {'timkalation': 'timkalation', 'bison_42': 'bison_42', 'raymonddoerr': 'raymonddoerr'}
         self.myMastersFile = 'myMasters.json'
         myMastersTmp = helper.loadJson(self.myMastersFile)
+
         if myMastersTmp is not None:
             myMasters = myMastersTmp
+
         if STREAMER_NAME not in self.myMasters:
             self.myMasters[STREAMER_NAME] = STREAMER_NAME
 
@@ -105,7 +108,7 @@ class tBot(object):
 
         self.momentumIndex = 0
 
-    def checkMaster(self, username, message='', silent = False):
+    def checkMaster(self, username, message='', silent=False):
         if username in self.myMasters:
             return True
         elif not silent:
@@ -173,9 +176,9 @@ class tBot(object):
         elif '!wassindhamster' == messageLower or '!hamster' == messageLower:
             helper.explainHamster(self)
         elif '!go' == messageLower:
-            self.chat("@timkalation: GO GO TIM TIM GO GO!")
+            self.chat("@" + STREAMER_NAME + ": GO GO TIM TIM GO GO!")
         elif '!burn' == messageLower:
-            self.chat('🔥'*10)
+            self.chat('🔥' * 10)
         elif '!!myrank' == messageLower or '!!wutcoins' == messageLower:
             self.chat('!wutcoins')
         elif '!silence' == messageLower:
@@ -203,7 +206,7 @@ class tBot(object):
         elif not config.LOBOTOMY and message.startswith('!sr'):
             if self.checkMaster(username, '', True):
                 songRequest = message.replace('!sr ', '')
-                if not songRequest in self.songRequests:
+                if songRequest not in self.songRequests:
                     self.songRequests[songRequest] = time.strftime("%Y-%m-%d %H:%M:%S: ") + username + ' ' + songRequest
                     helper.saveJson(self.songRequestsFile, self.songRequests)
                     self.songRequestsModule.loadFromDict(self.songRequests)
@@ -224,8 +227,7 @@ class tBot(object):
                 #    # TODO: load file to list
 
                 for i in range(amount):
-                    self.chat('!sr ' + self.songRequestsModule.getElement())
-                    sleep(1)
+                    self.addMessageQueue('!sr ' + self.songRequestsModule.getElement())
 
         elif not config.LOBOTOMY and '!want' == messageLower:
             answerMessage = ''
@@ -330,7 +332,7 @@ class tBot(object):
                 self.chatMemory.clean(True)
                 self.timerMemory.clean(True)
 
-        elif not config.LOBOTOMY and  messageLower.startswith('!wetten'):
+        elif not config.LOBOTOMY and messageLower.startswith('!wetten'):
             if not hasattr(self, 'wette'):
                 import iBet
                 self.wette = iBet.iBet(self)
@@ -481,6 +483,7 @@ class tBot(object):
 
     def executor(self):
         response = None
+
         try:
             received = self.sock.recv(2048)
             response = received.decode("utf-8")
@@ -517,7 +520,7 @@ class tBot(object):
             username = ''
             message = ''
             try:
-                #'NoneType' object has no attribute 'group'
+                # possible error on connection-loss: 'NoneType' object has no attribute 'group'
                 username = re.search(r"\w+", response).group(0)
                 message = CHAT_MSG.sub("", response)
             except Exception as ex:
@@ -621,6 +624,7 @@ class tBot(object):
             else:
                 pass
                 #helper.log('UNKNOWN:' + response)
+
         return self.EXECUTOR_STATE_OK
 
     def getUsers(self, forceLoad=False):
@@ -698,16 +702,20 @@ class tBot(object):
     def addMessageQueue(self, msg='', maxLength=499):
         if len(msg) <= maxLength:
             self.messageQueue.append(msg)
+            return
 
         words = msg.split()
         rebuildParts = ''
         for word in words:
-            rebuildPartsTest = rebuildParts + word
+            rebuildPartsTest = rebuildParts + ' ' + word
             if len(rebuildPartsTest) >= maxLength:
                 self.messageQueue.append(rebuildParts)
-                rebuildParts = ''
+                rebuildParts = word
             else:
                 rebuildParts = rebuildPartsTest
+
+        if rebuildParts:
+            self.messageQueue.append(rebuildParts)
 
     def sendMessageQueue(self):
         if len(self.messageQueue) == 0:
@@ -715,7 +723,7 @@ class tBot(object):
 
         msg = self.messageQueue.pop(0)
 
-        helper.log('sending... "' + msg + '"')
+        helper.log('sending "' + msg + '"')
         try:
             self.sock.send("PRIVMSG {} :{}\r\n".format(CHAN, msg).encode())
         except Exception as ex:

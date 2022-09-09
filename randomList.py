@@ -18,7 +18,7 @@ class randomList(object):
 
         return selectedElement
 
-    def loadFromDict(self, _dict, loadKeys = True):
+    def loadFromDict(self, _dict, loadKeys=True):
         entries = []
         if loadKeys:
             entries = _dict.keys()
