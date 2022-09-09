@@ -62,7 +62,7 @@ target/
 # my
 .idea/
 notes.txt
-config_local.py
+config_local*.py
 dynamicCommands.json
 recorded_chat*.txt
 venv/
