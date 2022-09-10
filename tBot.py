@@ -5,13 +5,9 @@ import time
 import os
 import shortTermMemory
 import randomList
-import helper
+from modules import helper, NightWatch
+import config_loader as config
 
-
-if os.path.isfile('config_local.py'):
-    import config_local as config
-else:
-    import config
 
 STREAMER_NAME = config.CHAN.replace('#', '')
 #http://www.twitchapps.com/tmi/
@@ -38,6 +34,8 @@ class tBot(object):
         self.lastTimeMessageReceived = 0
         self.connected = False
         self.die = False
+
+        self.nightWatch = NightWatch.NightWatch()
 
         self.myMasters = {'bison_42': 'bison_42'}
         self.myMastersFile = 'myMasters.json'
@@ -297,7 +295,7 @@ class tBot(object):
                         self.chat('there is no KEY left to give away :*(')
                     else:
                         getMsg = 'here is your key ' + _userGetOne + ' "' + key + '" have fun o/'
-                        helper.log('GIVEAWAY TO: "'+ _userGetOne + '" KEY: "'+ key +'"')
+                        helper.log('GIVEAWAY TO: "' + _userGetOne + '" KEY: "' + key + '"')
                         #self.chat(getMsg)
                         if self.whisper(_userGetOne, getMsg):
                             #self.whisper('bison_42', getMsg)
@@ -547,12 +545,14 @@ class tBot(object):
                     sleep(2.2)
 
             if username == 'tmi' or username == config.NICK:
-                pass
-                #helper.log(response)
+                return self.EXECUTOR_STATE_OK
             elif self.checkRude(username):
                 helper.log('RUDE BLOCK: ' + username)
+                return self.EXECUTOR_STATE_OK
 
-            elif message[0] == '!':
+            self.nightWatch.received_message(username)
+
+            if message[0] == '!':
                 self.commands(username, message, messageLower)
 
             elif not config.LOBOTOMY:
@@ -689,11 +689,15 @@ class tBot(object):
             helper.log('MEMORY BLOCK FOR: "' + msg + '"')
             return False
 
-        if self.isSilent:
+        elif self.isSilent:
             helper.log('stealth-mode: "' + msg + '"')
             return False
 
         self.chatMemory.add(msg, memoryLifeTime)
+        if self.nightWatch.is_asleep():
+            helper.log('sleeping: "' + msg + '"')
+            return False
+
         self.addMessageQueue(msg)
 
         if chatDelay > 0:

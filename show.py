@@ -1,5 +1,5 @@
 import sys
-import helper
+from modules import helper
 
 if len(sys.argv) == 2:
     if sys.argv[1] == 'dynamic' or True:

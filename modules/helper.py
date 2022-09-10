@@ -3,6 +3,7 @@ import json
 
 
 DURATION_MINUTES_2 = 120
+DURATION_MINUTES_30 = 60 * 30
 DURATION_HOURS_1 = 3600
 DURATION_HOURS_2 = DURATION_HOURS_1 * 2
 DURATION_HOURS_4 = DURATION_HOURS_1 * 4
@@ -68,7 +69,7 @@ def log(msg):
 
 
 def popGiveAway():
-    allLines = open('giveAways.txt', 'r').readlines()
+    allLines = open('../giveAways.txt', 'r').readlines()
     newLines = ''
     returnLine = ''
     for line in allLines:
@@ -79,7 +80,7 @@ def popGiveAway():
         elif line != '':
             newLines += line + "\n"
 
-    writeHandle = open('giveAways.txt', 'w')
+    writeHandle = open('../giveAways.txt', 'w')
     writeHandle.write(newLines)
     writeHandle.close()
     #print(allLines)
