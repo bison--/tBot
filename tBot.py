@@ -39,7 +39,7 @@ class tBot(object):
         self.connected = False
         self.die = False
 
-        self.myMasters = {'timkalation': 'timkalation', 'bison_42': 'bison_42', 'raymonddoerr': 'raymonddoerr'}
+        self.myMasters = {'bison_42': 'bison_42'}
         self.myMastersFile = 'myMasters.json'
         myMastersTmp = helper.loadJson(self.myMastersFile)
 
@@ -230,7 +230,8 @@ class tBot(object):
                 #    # TODO: load file to list
 
                 for i in range(amount):
-                    self.addMessageQueue('!sr ' + self.songRequestsModule.getElement())
+                    self.chat('!sr ' + self.songRequestsModule.getElement())
+                    sleep(0.5)
 
         elif not config.LOBOTOMY and '!want' == messageLower:
             answerMessage = ''

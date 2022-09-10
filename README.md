@@ -14,7 +14,7 @@ This bot does not use the bot-api, it connects to the irc-server. Yes, twitch is
 
 to add a command follow these steps:
 
-* be **@timkalation** or **@bison_42** or the streamer (channel name)
+* be **@bison_42** or the streamer (channel name)
 * type **!!add** then the new command (like **!hype**) and then the text you wanted to show
 
 ```
@@ -132,5 +132,5 @@ Access various lists.
 * `!!masters list` list masters
 * `!silence` activate/deactivate ALL chats from the bot
 * `!takebluepill`, `!bluepill` kills the short time memory / resets all timers for chat and interval messages
-* `!rude add someTwitchUser` adds a user to the RUDE list and he will be completely ignored. Username is case-sensitive AND without the @
+* `!rude add someTwitchUser` adds a user to the RUDE list, he will be completely ignored. Username is case-sensitive AND without the @
 
