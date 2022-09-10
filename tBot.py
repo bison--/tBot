@@ -176,7 +176,10 @@ class tBot(object):
         elif '!wassindhamster' == messageLower or '!hamster' == messageLower:
             helper.explainHamster(self)
         elif '!go' == messageLower:
-            self.chat("@" + STREAMER_NAME + ": GO GO TIM TIM GO GO!")
+            if STREAMER_NAME == 'timkalation':
+                self.chat("@" + STREAMER_NAME + ": GO GO TIM TIM GO GO!")
+            else:
+                self.chat("@" + STREAMER_NAME + ": GO GO " + STREAMER_NAME + " GO GO!")
         elif '!burn' == messageLower:
             self.chat('🔥' * 10)
         elif '!!myrank' == messageLower or '!!wutcoins' == messageLower:
