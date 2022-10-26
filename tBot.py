@@ -680,7 +680,9 @@ class tBot(object):
             helper.log('stealth-mode: "' + msg + '"')
             return False
 
-        self.chatMemory.add(msg, memoryLifeTime)
+        if memoryLifeTime != helper.DURATION_IGNORE:
+            self.chatMemory.add(msg, memoryLifeTime)
+
         if self.nightWatch.is_asleep():
             helper.log('sleeping: "' + msg + '"')
             return False
