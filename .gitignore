@@ -66,3 +66,4 @@ config_local*.py
 dynamicCommands.json
 recorded_chat*.txt
 venv/
+!/data/.gitkeep
