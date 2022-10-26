@@ -12,7 +12,7 @@ class EightBall:
         self.fortunes = RandomList.RandomList()
 
         self.dataFile = 'eightball.json'
-        self.helpUrl = 'https://github.com/bison--/tbot'
+        self.helpUrl = 'https://github.com/bison--/tbot#8-ball'
 
         # commands are key / requires master level value
         self.availableCommands = {
@@ -77,7 +77,7 @@ class EightBall:
             if subCommand == 'add':
                 self.fortunes.elements.append(message.replace('!8ball add ', ''))
                 self.saveData()
-                self.tBot.chat('i will remeber this fortune', helper.DURATION_IGNORE)
+                self.tBot.chat('i will remember this fortune', helper.DURATION_IGNORE)
                 return
 
             if subCommand == 'del' or subCommand == 'remove':
