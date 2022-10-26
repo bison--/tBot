@@ -97,6 +97,7 @@ class tBot(object):
 
         self.usersInChatLastRefresh = 0
         self.usersInChat = set()
+        self.sendMessageCounter = 0
 
         self.messageQueue = []
 
@@ -723,6 +724,7 @@ class tBot(object):
         helper.log('sending "' + msg + '"')
         try:
             self.sock.send("PRIVMSG {} :{}\r\n".format(CHAN, msg).encode())
+            self.sendMessageCounter += 1
         except Exception as ex:
             helper.log('CHAT SEND ERROR: ' + str(ex))
             return False

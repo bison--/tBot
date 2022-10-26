@@ -70,14 +70,14 @@ class EightBall:
             if self.isSubCommandCatched(cmdParts[1], self.availableSubCommandsMasterLevel):
                 subCommand = cmdParts[1]
             else:
-                self.tBot.chat('Unknown command for 8ball, see ' + self.helpUrl, helper.DURATION_IGNORE)
+                self.tBot.chat(f'({self.tBot.sendMessageCounter}) Unknown command for 8ball, see ' + self.helpUrl, helper.DURATION_IGNORE)
                 return
 
         if len(cmdParts) >= 3:
             if subCommand == 'add':
                 self.fortunes.elements.append(message.replace('!8ball add ', ''))
                 self.saveData()
-                self.tBot.chat('i will remember this fortune', helper.DURATION_IGNORE)
+                self.tBot.chat(f'({self.tBot.sendMessageCounter}) i will remember this fortune', helper.DURATION_IGNORE)
                 return
 
             if subCommand == 'del' or subCommand == 'remove':
@@ -87,19 +87,19 @@ class EightBall:
                 try:
                     self.fortunes.elements.remove(messageModified)
                     self.saveData()
-                    self.tBot.chat('i will forget this fortune', helper.DURATION_IGNORE)
+                    self.tBot.chat(f'({self.tBot.sendMessageCounter}) i will forget this fortune', helper.DURATION_IGNORE)
                 except Exception as ex:
-                    self.tBot.chat('unFORTUNEately i dont know of that', helper.DURATION_IGNORE)
+                    self.tBot.chat(f'({self.tBot.sendMessageCounter}) unFORTUNEately i dont know of that', helper.DURATION_IGNORE)
 
                 return
 
-        self.tBot.chat('Insufficient parameters, see ' + self.helpUrl, helper.DURATION_IGNORE)
+        self.tBot.chat(f'({self.tBot.sendMessageCounter}) Insufficient parameters, see ' + self.helpUrl, helper.DURATION_IGNORE)
 
     def sendRandomMessage(self, userName):
         modifiedMessage = self.fortunes.getElement()
 
         if modifiedMessage is None:
-            self.tBot.chat('i have nothing to say')
+            self.tBot.chat(f'({self.tBot.sendMessageCounter}) i have nothing to say')
             return
 
         modifiedMessage = modifiedMessage.replace('{username}', userName)
