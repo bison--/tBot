@@ -2,10 +2,8 @@ import re
 from time import sleep
 import socket
 import time
-import os
 import shortTermMemory
-import randomList
-from modules import helper, NightWatch
+from modules import helper, NightWatch, RandomList, EightBall
 import config_loader as config
 
 
@@ -90,10 +88,12 @@ class tBot(object):
         songRequestsTmp = helper.loadJson(self.songRequestsFile)
         if songRequestsTmp is not None:
             self.songRequests = songRequestsTmp
-        self.songRequestsModule = randomList.randomList()
+        self.songRequestsModule = RandomList.RandomList()
         self.songRequestsModule.loadFromDict(self.songRequests)
 
         self.tquest = None
+
+        self.eightBall = EightBall.EightBall(self)
 
         self.usersInChatLastRefresh = 0
         self.usersInChat = set()
@@ -204,6 +204,12 @@ class tBot(object):
                 self.rudes[rudeUsername] = 1
                 helper.saveJson(self.rudesFile, self.rudes)
 
+        elif self.eightBall.isCommandCatched(message):
+            if self.chatMemory.isInMemory('!8ball') and not self.checkSubMaster(username):
+                return
+
+            self.eightBall.process(username, message, messageLower)
+
         elif not config.LOBOTOMY and message.startswith('!sr'):
             if self.checkMaster(username, '', True):
                 songRequest = message.replace('!sr ', '')
@@ -223,8 +229,8 @@ class tBot(object):
                     amount = 1
 
                 #if not hasattr(self, 'songRequestsModule'):
-                #    import randomList
-                #    self.songRequestsModule = randomList.randomList()
+                #    import RandomList
+                #    self.songRequestsModule = RandomList.RandomList()
                 #    # TODO: load file to list
 
                 for i in range(amount):

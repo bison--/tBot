@@ -44,10 +44,33 @@ to remove a command follow these steps:
 
 ## kill the ghost
 
-* be **@timkalation** or **@bison_42**
+* be the streamer or **@bison_42**
 * type **!kill** in the chat
 * ...
 * profit!
+
+## 8 ball
+
+ask the 8-ball  
+
+cool down is hard coded to 30 seconds, masters and submasters are free from this limitation
+
+### commands
+* `!8ball`
+  * gives a random element from the added fortunes
+* `!8ball add TEXT`
+  * adds the fortune TEXT
+* `!8ball remove TEXT`
+  * removes the fortune TEXT
+
+examples
+```
+!8ball
+!8ball add You shall not pass
+!8ball add You shall not pass {username}
+!8ball remove You shall not pass
+!8ball remove You shall not pass {username}
+```
 
 ## give aways
 

@@ -1,7 +1,7 @@
 import random
 
 
-class randomList(object):
+class RandomList(object):
     def __init__(self):
         self.elements = [
         ]
@@ -11,6 +11,9 @@ class randomList(object):
     def getElement(self):
         if len(self.remainingElements) == 0:
             self.remainingElements = list(self.elements)
+
+        if len(self.remainingElements) == 0:
+            return None
 
         index = random.randint(0, len(self.remainingElements) - 1)
         selectedElement = self.remainingElements[index]
@@ -31,7 +34,7 @@ class randomList(object):
 
 
 if __name__ == "__main__":
-    rl = randomList()
+    rl = RandomList()
 
     rl.elements = [
         'https://www.youtube.com/watch?v=OxSiQG5AnA8',
