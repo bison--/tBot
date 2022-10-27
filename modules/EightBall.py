@@ -11,6 +11,7 @@ class EightBall:
         self.tBot = tBot
         self.fortunes = RandomList.RandomList()
 
+        self.coolDown = 30
         self.dataFile = 'eightball.json'
         self.helpUrl = 'https://github.com/bison--/tbot#8-ball'
 
@@ -57,11 +58,13 @@ class EightBall:
 
     def process(self, userName, message, messageLower):
         if messageLower == '!8ball':
-            self.tBot.chatMemory.add('!8ball', 30)
+            self.tBot.chatMemory.add('!8ball', self.coolDown)
             self.sendRandomMessage(userName)
             return
 
         if not self.tBot.checkSubMaster(userName):
+            self.tBot.chatMemory.add('!8ball', self.coolDown)
+            self.sendRandomMessage(userName)
             return
 
         cmdParts = message.split(' ')
@@ -70,7 +73,9 @@ class EightBall:
             if self.isSubCommandCatched(cmdParts[1], self.availableSubCommandsMasterLevel):
                 subCommand = cmdParts[1]
             else:
-                self.tBot.chat(f'({self.tBot.sendMessageCounter}) Unknown command for 8ball, see ' + self.helpUrl, helper.DURATION_IGNORE)
+                #self.tBot.chat(f'({self.tBot.sendMessageCounter}) Unknown command for 8ball, see ' + self.helpUrl, helper.DURATION_IGNORE)
+                self.tBot.chatMemory.add('!8ball', self.coolDown)
+                self.sendRandomMessage(userName)
                 return
 
         if len(cmdParts) >= 3:
@@ -93,7 +98,10 @@ class EightBall:
 
                 return
 
-        self.tBot.chat(f'({self.tBot.sendMessageCounter}) Insufficient parameters, see ' + self.helpUrl, helper.DURATION_IGNORE)
+        # no command catched, send a fortune
+        self.tBot.chatMemory.add('!8ball', self.coolDown)
+        self.sendRandomMessage(userName)
+        # self.tBot.chat(f'({self.tBot.sendMessageCounter}) Insufficient parameters, see ' + self.helpUrl, helper.DURATION_IGNORE)
 
     def sendRandomMessage(self, userName):
         modifiedMessage = self.fortunes.getElement()
