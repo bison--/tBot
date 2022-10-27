@@ -62,7 +62,7 @@ class EightBall:
             self.sendRandomMessage(userName)
             return
 
-        if not self.tBot.checkSubMaster(userName):
+        if not self.tBot.checkSubMaster(userName, None):
             self.tBot.chatMemory.add('!8ball', self.coolDown)
             self.sendRandomMessage(userName)
             return

@@ -124,7 +124,9 @@ class tBot(object):
         if username in self.mySubMasters:
             return True
         else:
-            if message == '':
+            if message is None:
+                return False
+            elif message == '':
                 self.chat('@' + username + ' your kung fu is not strong enough!')
             else:
                 self.chat(message)
