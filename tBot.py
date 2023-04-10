@@ -517,11 +517,18 @@ class tBot(object):
             self.connected = False
             return self.EXECUTOR_STATE_DEAD
 
-        if response is None or response == '':
-            return self.EXECUTOR_STATE_EMPTY
+        # process piled up intervals, in case there is no chat activity in between
+        self.processIntervall('')
 
         if self.sendMessageQueue():
-            time.sleep(1)  # anti-spam protection
+            # anti-spam protection
+            time.sleep(1)
+        else:
+            # an error sending queue is never a good sign, treat as dead!
+            return self.EXECUTOR_STATE_DEAD
+
+        if response is None or response == '':
+            return self.EXECUTOR_STATE_EMPTY
 
         if response == "PING :tmi.twitch.tv\r\n":
             self.sock.send("PONG :tmi.twitch.tv\r\n".encode())
@@ -542,15 +549,9 @@ class tBot(object):
 
             helper.log(username + ': ' + message)
 
-            for intervalKey, intervalTime in config.INTERVALS.items():
-                if message == intervalKey:
-                    self.timerMemory.setTimeFor(intervalKey, intervalTime)
-                elif not self.timerMemory.isInMemory(intervalKey):
-                    ## no lobotomy for configs!
-                    # if not config.LOBOTOMY:
-                    self.chat(intervalKey)
-                    self.timerMemory.add(intervalKey, intervalTime)
-                    sleep(2.2)
+            # interval messages can be triggered from user commands,
+            # therefore has to be checked here to, to set timeouts
+            self.processIntervall(message)
 
             if username == 'tmi' or username == config.NICK:
                 return self.EXECUTOR_STATE_OK
@@ -695,6 +696,16 @@ class tBot(object):
             return False
 
         return True
+
+    def processIntervall(self, message):
+        for intervalKey, intervalTime in config.INTERVALS.items():
+            if message == intervalKey:
+                self.timerMemory.setTimeFor(intervalKey, intervalTime)
+            elif not self.timerMemory.isInMemory(intervalKey):
+                ## no lobotomy for configs!
+                # if not config.LOBOTOMY:
+                self.chat(intervalKey)
+                self.timerMemory.add(intervalKey, intervalTime)
 
     def momentum(self, username):
         if username == 'varu7777777':
