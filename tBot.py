@@ -582,7 +582,7 @@ class tBot(object):
                         self.rudes[username] = 1
                         helper.saveJson(self.rudesFile, self.rudes)
                 elif CHAN == '#jasmineitor' and 'jasmin' in messageLower:
-                    # TODO: mve such special cases somewhere else ^^"
+                    # TODO: move such special cases somewhere else ^^"
                     if 'jasmin' in wordsLower:
                         self.chat("That's Jasmine with an E to you! @" + username, 10)
                 elif 'momentum' in messageLower:
