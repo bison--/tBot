@@ -9,7 +9,7 @@ class NightWatch:
     def __init__(self):
         self.time_last_message = 0
         self.sleeping_time = 0
-        self.time_till_sleep = helper.DURATION_MINUTES_30
+        self.time_till_sleep = helper.DURATION_HOURS_1
         self.known_bots = {'tmi', config.NICK}
 
         self.__set_time__()
