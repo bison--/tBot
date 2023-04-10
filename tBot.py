@@ -479,7 +479,6 @@ class tBot(object):
 
         while self.connected:
             try:
-                self.getUsers()
                 if self.executor() == self.EXECUTOR_STATE_DEAD:
                     helper.log('main_loop 2: EXECUTOR FAILED!')
                     break
@@ -620,42 +619,6 @@ class tBot(object):
                 #helper.log('UNKNOWN:' + response)
 
         return self.EXECUTOR_STATE_OK
-
-    def getUsers(self, forceLoad=False):
-        #https://tmi.twitch.tv/group/user/timkalation/chatters
-        #http://tmi.twitch.tv/group/user/timkalation/chat_stream
-        if False and (forceLoad or self.usersInChatLastRefresh + 10 < time.time()):
-            try:
-                self.usersInChatLastRefresh = time.time()
-                newUsers = set()
-                import json
-                from urllib.request import urlopen
-                url = 'https://tmi.twitch.tv/group/user/' + config.CHAN.replace('#', '') + '/chatters'
-                response = urlopen(url, timeout=2)
-                data = json.loads(response.read().decode('utf-8'))
-                '''
-                    {'chatters':
-                            {'admins': [], 'staff': [],
-                                'viewers': ['bisons_ghost', 'okalot'], 'global_mods': [],
-                                'moderators': ['bison_42', 'moobot', 'nightbot', 'timkalation']
-                            },
-                            '_links': {},
-                            'chatter_count': 18
-                    }
-                '''
-
-                for name in data['chatters']['viewers']:
-                    if name is not config.NICK:
-                        newUsers.add(name)
-                for name in data['chatters']['moderators']:
-                    if name is not config.NICK:
-                        newUsers.add(name)
-
-                self.usersInChat = newUsers
-            except Exception as ex:
-                helper.log('getUsers ERROR: ' + str(ex))
-
-        return self.usersInChat
 
     def whisper(self, userName, msg):
         helper.log('whispering to "' + userName + '"... "' + msg + '"')
