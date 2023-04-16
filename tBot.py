@@ -105,6 +105,10 @@ class tBot(object):
         self.EXECUTOR_STATE_OK = 1
         self.EXECUTOR_STATE_EMPTY = 2
 
+        self.MESSAGE_QUEUE_PROCESSED_EMPTY = 0
+        self.MESSAGE_QUEUE_PROCESSED_SEND = 1
+        self.MESSAGE_QUEUE_PROCESSED_ERROR = 2
+
         self.momentumIndex = 0
 
     def checkMaster(self, username, message='', silent=False):
@@ -520,7 +524,7 @@ class tBot(object):
         # process piled up intervals, in case there is no chat activity in between
         self.processIntervall('')
 
-        if self.sendMessageQueue():
+        if self.sendMessageQueue() != self.MESSAGE_QUEUE_PROCESSED_ERROR:
             # anti-spam protection
             time.sleep(1)
         else:
@@ -683,7 +687,7 @@ class tBot(object):
 
     def sendMessageQueue(self):
         if len(self.messageQueue) == 0:
-            return False
+            return self.MESSAGE_QUEUE_PROCESSED_EMPTY
 
         msg = self.messageQueue.pop(0)
 
@@ -693,9 +697,9 @@ class tBot(object):
             self.sendMessageCounter += 1
         except Exception as ex:
             helper.log('CHAT SEND ERROR: ' + str(ex))
-            return False
+            return self.MESSAGE_QUEUE_PROCESSED_ERROR
 
-        return True
+        return self.MESSAGE_QUEUE_PROCESSED_SEND
 
     def processIntervall(self, message):
         for intervalKey, intervalTime in config.INTERVALS.items():
