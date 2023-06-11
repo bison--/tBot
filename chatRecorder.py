@@ -2,15 +2,10 @@ import re
 from time import sleep
 import socket
 import time
-import os
+
+import config_loader as config
 
 # more information: https://dev.twitch.tv/docs/irc
-
-if os.path.isfile('config_local.py'):
-    import config_local as config
-else:
-    import config
-
 
 HOST = "irc.twitch.tv"
 PORT = 6667
@@ -18,14 +13,14 @@ NICK = config.NICK
 PASS = config.PASS
 CHAN = config.CHAN
 CHAT_MSG = re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
-LOG_FILE = "recorded_chat.txt"
 
 
-def log(msg, writeFile):
-    logLine = time.strftime("%Y-%m-%d %H:%M:%S: ") + msg
-    print(logLine)
-    if writeFile:
-        open(LOG_FILE, "a").write(logLine)
+def log(msg, write_to_file):
+    log_line = time.strftime("%Y-%m-%d %H:%M:%S: ") + msg
+    print(log_line)
+    if write_to_file:
+        log_file = "data/recorded/recorded_chat_{0}.txt".format(time.strftime("%Y-%m-%d"))
+        open(log_file, "a", encoding='utf-8').write(log_line)
 
 
 def chat(sock, msg):
