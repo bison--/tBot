@@ -8,7 +8,11 @@ class UserListFile:
         self.__file_path = file_path
         self.__file_name = os.path.basename(self.__file_path)
         self.__file_name_no_ext = os.path.splitext(self.__file_name)[0]
-        self.__file_change_date = self.__get_modified_time()
+
+        self.__file_change_date = 0.0
+        if os.path.isfile(self.__file_path):
+            self.__file_change_date = self.__get_modified_time()
+
         self.__user_names = set()
 
         self.__has_data = self.__load_user_list()
