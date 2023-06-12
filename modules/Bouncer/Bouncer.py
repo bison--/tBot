@@ -22,8 +22,8 @@ class Bouncer:
         if not config.BOUNCER_ACTIVE:
             return user_info
 
-        if self.__memory_users.isInMemory(user_info):
-            memory_info: shortTermMemory.memory = self.__memory_users.getFromMemory(user_info)
+        memory_info: shortTermMemory.memory = self.__memory_users.getFromMemory(user_info)
+        if memory_info is not None:
             return memory_info.data
 
         for blacklist_file in config.BOUNCER_BLACKLIST:
