@@ -1,7 +1,15 @@
 import os
 
 
-if os.path.isfile('config_local.py'):
+from config import *
+try:
     from config_local import *
-else:
-    from config import *
+except ImportError:
+    pass
+
+
+from config_bouncer import *
+try:
+    from config_bouncer_local import *
+except ImportError:
+    pass

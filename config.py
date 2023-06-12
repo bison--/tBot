@@ -1,8 +1,8 @@
 NICK = 'myNick'
 PASS = 'oauth:blah'
-CHAN = '#timkalation'
+CHAN = '#jujibla'
 
-# removes nearly all auto-talk functionallity from the ghost
+# removes nearly all auto-talk functionality from the ghost
 LOBOTOMY = False
 
 # launch the ghost in !silence mode

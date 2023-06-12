@@ -60,12 +60,14 @@ docs/_build/
 target/
 
 # my
+venv/
 .idea/
+
 notes.txt
 config_local*.py
+config_*_local.py
 dynamicCommands.json
 recorded_chat*.txt
-venv/
 
 !/data/.gitkeep
 !/data/recorded/.gitkeep

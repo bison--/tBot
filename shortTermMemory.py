@@ -17,6 +17,12 @@ class shortTermMemory(object):
 
         self.memoryList.append(memory(data, timeToLive))
 
+    def addUpdate(self, data, timeToLive=0):
+        if self.isInMemory(data):
+            self.setTimeFor(data, timeToLive)
+        else:
+            self.add(data, timeToLive)
+
     def setTimeFor(self, data, timeToLive):
         found = 0
         for memory in reversed(self.memoryList):
@@ -33,6 +39,20 @@ class shortTermMemory(object):
             if memory.data == data:
                 return True
         return False
+
+    def getFromMemory(self, data):
+        """
+        to get equals overloaded data from memory
+        :param data:
+        :return: None or object
+        """
+        if self.autoClean:
+            self.clean()
+
+        for memory in self.memoryList:
+            if memory.data == data:
+                return memory
+        return None
 
     def clean(self, enforce=False):
         if enforce:

@@ -4,6 +4,8 @@ import socket
 import time
 import shortTermMemory
 from modules import helper, NightWatch, RandomList, EightBall
+from modules.Bouncer.Bouncer import Bouncer
+from modules.Bouncer.UserInfo import UserInfo
 import config_loader as config
 
 
@@ -94,6 +96,8 @@ class tBot(object):
         self.tquest = None
 
         self.eightBall = EightBall.EightBall(self)
+
+        self.bouncer = Bouncer()
 
         self.usersInChatLastRefresh = 0
         self.usersInChat = set()
@@ -472,9 +476,14 @@ class tBot(object):
     def main_loop(self):
         try:
             self.sock.connect((HOST, PORT))
+
+            # allow receive DMs
+            # self.sock.send("CAP REQ :twitch.tv/commands\r\n".encode("utf-8"))
+
             self.sock.send("PASS {}\r\n".format(PASS).encode("utf-8"))
             self.sock.send("NICK {}\r\n".format(NICK).encode("utf-8"))
             self.sock.send("JOIN {}\r\n".format(CHAN).encode("utf-8"))
+
             self.connected = True
             self.chat('hi all o/')
         except Exception as ex:
@@ -563,6 +572,7 @@ class tBot(object):
                 helper.log('RUDE BLOCK: ' + username)
                 return self.EXECUTOR_STATE_OK
 
+            self.processBouncer(username)
             self.nightWatch.received_message(username)
 
             if message[0] == '!':
@@ -626,9 +636,23 @@ class tBot(object):
         return self.EXECUTOR_STATE_OK
 
     def whisper(self, userName, msg):
+        # twitch changed the whisper command but it doesnt work!
+        # https://dev.twitch.tv/docs/irc/commands/#whisper
         helper.log('whispering to "' + userName + '"... "' + msg + '"')
         try:
-            self.sock.send("PRIVMSG #jtv :/w {} {}\r\n".format(userName, msg).encode())
+            #               :<to-user>!<to-user>@<to-user>.tmi.twitch.tv WHISPER <from-user> :<message>
+            self.sock.send(":{0}!{0}@{0}.tmi.twitch.tv WHISPER {1} :{2}\r\n".format(userName, config.NICK, msg).encode())
+        except Exception as ex:
+            helper.log('CHAT SEND WHISPER ERROR: ' + str(ex))
+            return False
+
+        return True
+
+    def whisper_(self, userName, msg):
+        helper.log('whispering to "' + userName + '"... "' + msg + '"')
+        try:
+            #              "PRIVMSG jtv :/w {0} {1}"
+            self.sock.send("PRIVMSG jtv :/w {} {}\r\n".format(userName, msg).encode())
         except Exception as ex:
             helper.log('CHAT SEND WHISPER ERROR: ' + str(ex))
             return False
@@ -710,6 +734,27 @@ class tBot(object):
                 # if not config.LOBOTOMY:
                 self.chat(intervalKey)
                 self.timerMemory.add(intervalKey, intervalTime)
+
+    def processBouncer(self, username):
+        if not config.BOUNCER_ACTIVE:
+            return
+
+        self.bouncer.auto_update_files()
+
+        user_info: UserInfo = self.bouncer.get_user_info(username)
+
+        if not user_info.is_bad:
+            return
+
+        bouncer_dm_lock = 'BOUNCER_REPORT_DM_LOCK_' + username
+        if self.chatMemory.isInMemory(bouncer_dm_lock):
+            return
+
+        for report_to in config.BOUNCER_REPORT_TO:
+            self.whisper(report_to, 'User ' + username + ' is bad: ' + user_info.in_file_name)
+
+        helper.log('bouncer report for ' + username + ' to ' + str(config.BOUNCER_REPORT_TO))
+        self.chatMemory.add(bouncer_dm_lock, helper.DURATION_HOURS_1 * 8)
 
     def momentum(self, username):
         if username == 'varu7777777':
