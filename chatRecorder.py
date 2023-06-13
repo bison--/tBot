@@ -14,13 +14,20 @@ PASS = config.PASS
 CHAN = config.CHAN
 CHAT_MSG = re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
 
+BUFFER_SIZE = 2048
+SAVE_RAW = True
+LAUNCH_TIME = int(time.time())
+
 
 def log(msg, write_to_file):
     log_line = time.strftime("%Y-%m-%d %H:%M:%S: ") + msg
     print(log_line)
     if write_to_file:
-        log_file = "data/recorded/recorded_chat_{0}.txt".format(time.strftime("%Y-%m-%d"))
-        open(log_file, "a", encoding='utf-8').write(log_line)
+        log_file = "data/recorded/recorded_chat_{0}_{1}.txt".format(time.strftime("%Y-%m-%d"), LAUNCH_TIME)
+        if SAVE_RAW:
+            open(log_file, "a", encoding='utf-8').write(msg)
+        else:
+            open(log_file, "a", encoding='utf-8').write(log_line)
 
 
 def chat(sock, msg):
@@ -48,9 +55,22 @@ def main_loop():
         print(ex)
         connected = False
 
+    buffer = ""
     while connected:
         try:
-            response = s.recv(2048).decode("utf-8")
+            # Check if \r\n is in the buffer
+            while "\r\n" not in buffer:
+                # Receive data in chunks of BUFFER_SIZE bytes
+                part = s.recv(BUFFER_SIZE).decode("utf-8")
+                # Add received data to the buffer
+                buffer += part
+
+            # Split the buffer into two parts: data before \r\n and data after \r\n
+            response, _, after = buffer.partition("\r\n")
+            buffer = after  # keep data after \r\n in the buffer
+
+            response += "\r\n"  # rebuild original line
+
             if response == "PING :tmi.twitch.tv\r\n":
                 log("PONG: " + response, False)
                 s.send("PONG :tmi.twitch.tv\r\n".encode())
