@@ -30,6 +30,7 @@ class tBot(object):
         self.startTime = time.time()
         self.sock = socket.socket()
         self.sock.settimeout(SOCKET_TIMEOUT)
+        self.receive_buffer = ''
         self.timeoutCounter = 0
         self.lastTimeMessageReceived = 0
         self.connected = False
@@ -477,8 +478,10 @@ class tBot(object):
         try:
             self.sock.connect((HOST, PORT))
 
-            # allow receive DMs
-            # self.sock.send("CAP REQ :twitch.tv/commands\r\n".encode("utf-8"))
+            # needed for JOIN messages
+            self.sock.send("CAP REQ :twitch.tv/membership\r\n".encode("utf-8"))
+            #self.sock.send("CAP REQ :twitch.tv/commands\r\n".encode("utf-8"))
+            #self.sock.send("CAP REQ :twitch.tv/tags\r\n".encode("utf-8"))
 
             self.sock.send("PASS {}\r\n".format(PASS).encode("utf-8"))
             self.sock.send("NICK {}\r\n".format(NICK).encode("utf-8"))
@@ -508,8 +511,19 @@ class tBot(object):
         response = None
 
         try:
-            received = self.sock.recv(2048)
-            response = received.decode("utf-8")
+            # Check if \r\n is in the buffer
+            while "\r\n" not in self.receive_buffer:
+                # Receive data in chunks of BUFFER_SIZE bytes
+                received = self.sock.recv(2048).decode("utf-8")
+                # Add received data to the buffer
+                self.receive_buffer += received
+
+            # Split the buffer into two parts: data before \r\n and data after \r\n
+            response, _, after_buffer = self.receive_buffer.partition("\r\n")
+            self.receive_buffer = after_buffer  # keep data after \r\n in the buffer
+
+            response += "\r\n"  # rebuild original line, or i have to change the whole processing stack ^^"
+
             if response.strip() != '':
                 self.lastTimeMessageReceived = time.time()
             self.timeoutCounter = 0
@@ -533,13 +547,17 @@ class tBot(object):
         # process piled up intervals, in case there is no chat activity in between
         self.processIntervall('')
 
-        if self.sendMessageQueue() != self.MESSAGE_QUEUE_PROCESSED_ERROR:
-            # anti-spam protection
-            time.sleep(1)
-        else:
+        message_queue_state = self.sendMessageQueue()
+        if message_queue_state == self.MESSAGE_QUEUE_PROCESSED_ERROR:
             # an error sending queue is never a good sign, treat as dead!
             return self.EXECUTOR_STATE_DEAD
+        elif message_queue_state == self.MESSAGE_QUEUE_PROCESSED_SEND:
+            # anti-spam protection
+            time.sleep(1)
 
+        return self.processResponseLine(response)
+
+    def processResponseLine(self, response):
         if response is None or response == '':
             return self.EXECUTOR_STATE_EMPTY
 
@@ -571,6 +589,10 @@ class tBot(object):
             elif self.checkRude(username):
                 helper.log('RUDE BLOCK: ' + username)
                 return self.EXECUTOR_STATE_OK
+
+            if message.endswith(' JOIN ' + CHAN):
+                # TODO: process in bouncer and return
+                pass
 
             self.processBouncer(username)
             self.nightWatch.received_message(username)
