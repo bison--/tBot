@@ -72,4 +72,5 @@ recorded_chat*.txt
 !/data/.gitkeep
 !/data/recorded/.gitkeep
 !/data/userLists/README.md
+!/data/bouncerLog/.gitkeep
 /data

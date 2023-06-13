@@ -3,6 +3,7 @@ import config_loader as config
 
 from modules import helper
 from modules.Bouncer.UserInfo import UserInfo
+from modules.Bouncer.BouncerLog import BouncerLog
 
 
 class Bouncer:
@@ -12,12 +13,16 @@ class Bouncer:
     BOUNCER_FILES_LAST_UPDATE_KEY = 'BOUNCER_FILES_LAST_UPDATE_KEY'
 
     def __init__(self):
+        self.__bouncer_log = BouncerLog()
         self.__memory_users = shortTermMemory.shortTermMemory()
         self.__memory = shortTermMemory.shortTermMemory()
         self.update_files()
 
-    def get_user_info(self, user_name) -> UserInfo:
-        user_info = UserInfo(user_name, False)
+    def flush_log(self):
+        self.__bouncer_log.save_log()
+
+    def get_user_info(self, user_name, source) -> UserInfo:
+        user_info = UserInfo(user_name, False, source)
 
         if not config.BOUNCER_ACTIVE:
             return user_info
@@ -31,6 +36,7 @@ class Bouncer:
                 user_info.is_bad = True
                 user_info.in_file_name = blacklist_file.get_file_name_no_ext()
                 self.__memory_users.add(user_info, self.BOUNCER_BAD_USER_TIME_TO_LIVE)
+                self.__bouncer_log.add_log_entry(user_info)
                 return user_info
 
         self.__memory_users.add(user_info, self.BOUNCER_GOOD_USER_TIME_TO_LIVE)

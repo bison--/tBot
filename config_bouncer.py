@@ -7,6 +7,7 @@ from modules.Bouncer.UserListFile import UserListFile
 BOUNCER_ACTIVE = True
 BOUNCER_AUTO_BAN = False
 BOUNCER_REPORT_TO = []  # list of nicks here
+BOUNCER_LOG_PATH = 'data/bouncerLog'  # leave empty to not log
 
 BOUNCER_BLACKLIST: List[UserListFile] = [
     UserListFile('data/userLists/twitch_ban_lists/hate_troll_list_0_g.txt'),

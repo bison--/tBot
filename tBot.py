@@ -638,6 +638,8 @@ class tBot(object):
     def whisper(self, userName, msg):
         # twitch changed the whisper command but it doesnt work!
         # https://dev.twitch.tv/docs/irc/commands/#whisper
+        return False
+
         helper.log('whispering to "' + userName + '"... "' + msg + '"')
         try:
             #               :<to-user>!<to-user>@<to-user>.tmi.twitch.tv WHISPER <from-user> :<message>
@@ -741,7 +743,7 @@ class tBot(object):
 
         self.bouncer.auto_update_files()
 
-        user_info: UserInfo = self.bouncer.get_user_info(username)
+        user_info: UserInfo = self.bouncer.get_user_info(username, UserInfo.SOURCE_MESSAGE)
 
         if not user_info.is_bad:
             return
@@ -753,6 +755,8 @@ class tBot(object):
         for report_to in config.BOUNCER_REPORT_TO:
             self.whisper(report_to, 'User ' + username + ' is bad: ' + user_info.in_file_name)
 
+        # save log after every new entry
+        self.bouncer.flush_log()
         helper.log('bouncer report for ' + username + ' to ' + str(config.BOUNCER_REPORT_TO))
         self.chatMemory.add(bouncer_dm_lock, helper.DURATION_HOURS_1 * 8)
 
