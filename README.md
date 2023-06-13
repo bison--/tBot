@@ -10,6 +10,15 @@ This bot does not use the bot-api, it connects to the irc-server. Yes, twitch is
 * start the bot with `python3 tBot.py`
 * profit
 
+### user lists
+
+To use the bouncer module with twitch ban lists, clone the repository https://github.com/isdsdataarchive/twitch_ban_lists .
+
+```bash
+cd data/userLists/
+git clone https://github.com/isdsdataarchive/twitch_ban_lists.git
+```
+
 ## add a command
 
 to add a command follow these steps:

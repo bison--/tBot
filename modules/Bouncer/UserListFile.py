@@ -20,7 +20,7 @@ class UserListFile:
     def __load_user_list(self):
         self.__user_names.clear()
 
-        if not os.path.isfile(self.__file_path):
+        if not self.file_exists():
             helper.log("file '{}' not found.".format(self.__file_path))
             return False
 
@@ -35,7 +35,15 @@ class UserListFile:
     def __get_modified_time(self):
         return os.path.getmtime(self.__file_path)
 
+    def file_exists(self):
+        return os.path.isfile(self.__file_path)
+
     def update_file(self):
+        if not self.file_exists():
+            # when the file got deleted, we need to clear the user list
+            self.__user_names.clear()
+            return False
+
         if self.get_user_count() == 0 or self.__get_modified_time() > self.__file_change_date:
             self.__file_change_date = self.__get_modified_time()
             return self.__load_user_list()
