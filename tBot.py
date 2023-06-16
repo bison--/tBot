@@ -36,6 +36,8 @@ class tBot(object):
         self.connected = False
         self.die = False
 
+        self.MESSAGE_STARTS_WITH_JOIN_LIST = ':{0}.tmi.twitch.tv 353 {0} = {1} :'.format(NICK, CHAN)
+
         self.nightWatch = NightWatch.NightWatch()
 
         self.myMasters = {'bison_42': 'bison_42'}
@@ -584,7 +586,10 @@ class tBot(object):
             # therefore has to be checked here to, to set timeouts
             self.processIntervall(message)
 
-            if username == 'tmi' or username == config.NICK:
+            if username == 'tmi':
+                return self.EXECUTOR_STATE_OK
+            elif username == config.NICK:
+                self.processBouncerMessage(message)
                 return self.EXECUTOR_STATE_OK
             elif self.checkRude(username):
                 helper.log('RUDE BLOCK: ' + username)
@@ -594,7 +599,7 @@ class tBot(object):
                 # TODO: process in bouncer and return
                 pass
 
-            self.processBouncer(username)
+            self.processBouncerName(username)
             self.nightWatch.received_message(username)
 
             if message[0] == '!':
@@ -759,13 +764,8 @@ class tBot(object):
                 self.chat(intervalKey)
                 self.timerMemory.add(intervalKey, intervalTime)
 
-    def processBouncer(self, username):
-        if not config.BOUNCER_ACTIVE:
-            return
-
-        self.bouncer.auto_update_files()
-
-        user_info: UserInfo = self.bouncer.get_user_info(username, UserInfo.SOURCE_MESSAGE)
+    def processBouncer(self, username, detection_source):
+        user_info: UserInfo = self.bouncer.get_user_info(username, detection_source)
 
         if not user_info.is_bad:
             return
@@ -781,6 +781,26 @@ class tBot(object):
         self.bouncer.flush_log()
         helper.log('bouncer report for ' + username + ' to ' + str(config.BOUNCER_REPORT_TO))
         self.chatMemory.add(bouncer_dm_lock, helper.DURATION_HOURS_1 * 8)
+
+    def processBouncerName(self, username):
+        if not config.BOUNCER_ACTIVE:
+            return
+
+        self.bouncer.auto_update_files()
+        self.processBouncer(username, UserInfo.SOURCE_MESSAGE)
+
+    def processBouncerMessage(self, message):
+        # ':bisons_ghost.tmi.twitch.tv 353 bisons_ghost = #megumi_m :user_name other_user_name more_user_name'
+
+        if not message.startswith(self.MESSAGE_STARTS_WITH_JOIN_LIST):
+            return
+
+        self.bouncer.auto_update_files()
+        message_names = message.replace(self.MESSAGE_STARTS_WITH_JOIN_LIST, '')
+        names = message_names.split(' ')
+
+        for user_name in names:
+            self.processBouncer(user_name, UserInfo.SOURCE_JOIN_LIST)
 
     def momentum(self, username):
         if username == 'varu7777777':

@@ -4,6 +4,8 @@ from datetime import datetime
 class UserInfo:
     SOURCE_MESSAGE = 'message'
     SOURCE_STATUS = 'status'
+    SOURCE_JOIN = 'join'
+    SOURCE_JOIN_LIST = 'join_list'
 
     def __init__(self, _user_name, _is_bad, _source, _in_file_name=None):
         self.user_name = _user_name
