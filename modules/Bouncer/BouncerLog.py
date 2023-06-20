@@ -39,7 +39,8 @@ class BouncerLog:
         self.__locked_date = self.__locked_date_time.date()
         self.__log_folder = self.__get_today_folder()
         self.__create_today_folders()
-        self.__log_file = os.path.join(self.__log_folder, str(self.__locked_date_time.timestamp()) + ".json")
+        #self.__log_file = os.path.join(self.__log_folder, str(self.__locked_date_time.timestamp()) + ".json")
+        self.__log_file = os.path.join(self.__log_folder, self.__locked_date_time.strftime('%Y%m%d') + ".json")
 
     def __get_today_folder(self):
         return os.path.join(config.BOUNCER_LOG_PATH, str(self.__locked_date.year))
