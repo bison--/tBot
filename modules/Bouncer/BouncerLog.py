@@ -26,7 +26,10 @@ class BouncerLog:
         helper.saveJson(self.__log_file, [obj.__dict__ for obj in self.__log_entries])
 
     def __load_log(self):
-        if os.path.exists(self.__log_file) and os.path.getsize(self.__log_file) <= 0:
+        if not os.path.exists(self.__log_file):
+            return False
+
+        if os.path.getsize(self.__log_file) <= 0:
             return False
 
         with open(self.__log_file, 'r') as f:
