@@ -1,4 +1,5 @@
 import os
+import json
 import datetime
 from typing import List
 
@@ -15,6 +16,7 @@ class BouncerLog:
         self.__log_folder = ''
         self.__log_file = ''
         self.__set_today_log_file()
+        self.__load_log()
 
     def add_log_entry(self, _user_info: UserInfo):
         self.__set_today_log_file()
@@ -22,6 +24,23 @@ class BouncerLog:
 
     def save_log(self):
         helper.saveJson(self.__log_file, [obj.__dict__ for obj in self.__log_entries])
+
+    def __load_log(self):
+        if os.path.exists(self.__log_file) and os.path.getsize(self.__log_file) <= 0:
+            return False
+
+        with open(self.__log_file, 'r') as f:
+            data = json.load(f)
+            for entry in data:
+                self.__log_entries.append(
+                    UserInfo(
+                        entry["user_name"],
+                        entry["is_bad"],
+                        entry["source"],
+                        entry["in_file_name"]
+                    ))
+
+        return True
 
     def __set_today_log_file(self):
         # check if initial call or today has changed
