@@ -513,12 +513,18 @@ class tBot(object):
         response = None
 
         try:
+            no_new_line_counter = 0
             # Check if \r\n is in the buffer
             while "\r\n" not in self.receive_buffer:
+                no_new_line_counter += 1
                 # Receive data in chunks of BUFFER_SIZE bytes
                 received = self.sock.recv(2048).decode("utf-8")
                 # Add received data to the buffer
                 self.receive_buffer += received
+
+                if no_new_line_counter >= 100:
+                    helper.log('FATAL no_new_line_counter ERROR! Content: "' + self.receive_buffer + '"')
+                    return self.EXECUTOR_STATE_DEAD
 
             # Split the buffer into two parts: data before \r\n and data after \r\n
             response, _, after_buffer = self.receive_buffer.partition("\r\n")
