@@ -770,6 +770,10 @@ class tBot(object):
                 self.chat(intervalKey)
                 self.timerMemory.add(intervalKey, intervalTime)
 
+        if config.BOUNCER_ACTIVE:
+            # basic maintenance tasks the bouncer has to perform
+            self.bouncer.maintenance()
+
     def processBouncer(self, username, detection_source):
         user_info: UserInfo = self.bouncer.get_user_info(username, detection_source)
 
@@ -796,6 +800,9 @@ class tBot(object):
         self.processBouncer(username, UserInfo.SOURCE_MESSAGE)
 
     def processBouncerMessage(self, message):
+        if not config.BOUNCER_ACTIVE:
+            return
+
         # ':bisons_ghost.tmi.twitch.tv 353 bisons_ghost = #megumi_m :user_name other_user_name more_user_name'
 
         if not message.startswith(self.MESSAGE_STARTS_WITH_JOIN_LIST):

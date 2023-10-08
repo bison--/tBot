@@ -18,6 +18,9 @@ class Bouncer:
         self.__memory = shortTermMemory.shortTermMemory()
         self.update_files()
 
+    def maintenance(self):
+        self.__bouncer_log.day_changed_processor()
+
     def flush_log(self):
         self.__bouncer_log.save_log()
 
