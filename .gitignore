@@ -61,6 +61,7 @@ target/
 
 # my
 venv/
+venvs/
 .idea/
 
 notes.txt
