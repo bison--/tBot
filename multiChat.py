@@ -1,9 +1,7 @@
 import asyncio
 import re
-from time import sleep
-import socket
-import time
 import os
+import time
 
 if os.path.isfile('config_local.py'):
     import config_local as config
@@ -15,85 +13,67 @@ HOST = "irc.twitch.tv"
 PORT = 6667
 NICK = config.NICK
 PASS = config.PASS
-CHANS = [config.CHAN, '#limquats']
+CHANS = config.CHAN.split(',')
 CHAT_MSG = re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
 
 
-class MultiChat:
+class SimpleChat:
 
     def __init__(self):
-        self.connected = False
-        self.sock = socket.socket()
+        self.reader: asyncio.streams.StreamReader | None = None
+        self.writer: asyncio.streams.StreamWriter | None = None
 
     def log(self, msg):
         print(time.strftime("%Y-%m-%d %H:%M:%S: ") + msg)
 
-    def chat(self, msg):
-        """
-
-        :type sock: socket.socket
-        :type msg: string
-        """
-        self.log('sending...')
+    async def chat(self, msg):
         for chan in CHANS:
-            self.sock.send("PRIVMSG {} :{}\r\n".format(chan, msg).encode())
+            self.writer.write(f"PRIVMSG {chan} :{msg}\r\n".encode())
 
-    def connect(self):
-        try:
-            self.sock.connect((HOST, PORT))
-            self.sock.send("PASS {}\r\n".format(PASS).encode("utf-8"))
-            self.sock.send("NICK {}\r\n".format(NICK).encode("utf-8"))
-            for chan in CHANS:
-                self.sock.send("JOIN {}\r\n".format(chan).encode("utf-8"))
+        await self.writer.drain()
 
-            self.connected = True
-        except Exception as ex:
-            print(ex)
-            self.connected = False
+    async def connect(self):
+        self.reader, self.writer = await asyncio.open_connection(HOST, PORT)
+        self.writer.write(f"PASS {PASS}\r\n".encode())
+        self.writer.write(f"NICK {NICK}\r\n".encode())
 
-    def main_loop(self):
-        while self.connected:
-            try:
-                response = self.sock.recv(2048).decode("utf-8")
-                if response == "PING :tmi.twitch.tv\r\n":
-                    self.sock.send("PONG :tmi.twitch.tv\r\n".encode())
-                    self.log("PONG")
-                else:
-                    username = re.search(r"\w+", response).group(0)
-                    message = CHAT_MSG.sub("", response)
+        for chan in CHANS:
+            self.writer.write(f"JOIN {chan}\r\n".encode())
 
-                    message = message.strip()
-                    messageLower = message.lower()
+        await self.writer.drain()
 
-                    self.log(username + ": " + message)
+    async def receive_messages(self):
+        while True:
+            data = await self.reader.readline()
+            message = data.decode()
+            if message.startswith("PING"):
+                self.writer.write("PONG :tmi.twitch.tv\r\n".encode())
+                await self.writer.drain()
+                # self.log("PONG")
+            elif message:
+                # self.log(message)
+                username = re.search(r"\w+", message).group(0)
+                chat_message = CHAT_MSG.sub("", message).strip()
+                channel = ''
 
-                    if username == 'tmi' or username == config.NICK:
-                        pass
-                    #elif "!test" == messageLower:
-                    #    chat(s, "HAMSTER!")
-                    #elif 'hamster' in message:
-                    #    chat(s, "HAMSTER! \o/")
+                if '.tmi.twitch.tv PRIVMSG #' in message:
+                    channel = re.search(r"#\w+", message).group(0)
 
-                user_message = input("send: ")
-                if user_message:
-                    self.chat(user_message)
+                self.log(f"{channel} | {username}: {chat_message}")
 
-            except Exception as ex:
-                print(ex)
-                self.connected = False
-
-            sleep(0.1)
+    async def user_input(self):
+        while True:
+            user_message = await asyncio.to_thread(input, "send: ")
+            if user_message:
+                await self.chat(user_message)
 
 
-async def async_chat(chat):
-    while True:
-        user_message = await asyncio.to_thread(input, "send: ")
-        if user_message:
-            await chat(chat.sock, user_message)
-
+async def main():
+    chat = SimpleChat()
+    await chat.connect()
+    task_receive_messages = asyncio.create_task(chat.receive_messages())
+    task_user_input = asyncio.create_task(chat.user_input())
+    await asyncio.gather(task_receive_messages, task_user_input)
 
 if __name__ == "__main__":
-    chat = MultiChat()
-    chat.connect()
-    asyncio.run(async_chat(chat))
-    chat.main_loop()
+    asyncio.run(main())
