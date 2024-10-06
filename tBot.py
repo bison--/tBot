@@ -637,7 +637,7 @@ class tBot(object):
                     self.momentum(username)
                 elif 'chemie ' in messageLower or ' chemie' in messageLower:
                     self.chat("baukasten", helper.DURATION_HOURS_2)
-                elif 'hamster' in messageLower:
+                elif 'hamster' in wordsLower:
                     self.chat("HAMSTER! \o/")
                 elif username in self.userGreetings and self.userGreetings[username]['triggerOn'] == message:
                     self.chat(self.userGreetings[username]['text'], helper.DURATION_MINUTES_2)
